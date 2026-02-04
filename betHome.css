@@ -1,0 +1,25 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: black;
+}
+
+video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+}
+
+.widget {
+    position: absolute;
+}
+
+.widget-content {
+    color : white;
+    font-size: 20px;
+    font-family: "Aldrich", sans-serif;
+}

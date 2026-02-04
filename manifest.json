@@ -1,0 +1,19 @@
+{
+  "name": "Better Home",
+  "description": "A better google search screen",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_icon": "base_icon.png"
+  },
+
+  "chrome_url_overrides": {
+    "newtab": "betHome.html"
+  },
+
+  "icons": {
+    "128" : "base_icon.png"
+  }
+
+
+}
