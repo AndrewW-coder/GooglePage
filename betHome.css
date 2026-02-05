@@ -67,7 +67,7 @@ video {
 }
 
 .wide-adjust {
-    width: 15px;
+    width: 30px;
     height: 15px;
     position: absolute;
     right: 0;
@@ -75,6 +75,13 @@ video {
     cursor: ew-resize;
     border-radius: 4px;
 }
+
+/* hide cursors when editMode is off */
+body:not(.edit-mode) .resize-handle,
+body:not(.edit-mode) .wide-adjust {
+    cursor: default;
+}
+
 .edit-mode .widget {
   outline: 2px dashed white;
   cursor: move;
@@ -82,8 +89,9 @@ video {
 
 
 
-/* edit button */
-#editToggle {
+/* edit button and settings */
+
+#editToggle, #settings {
   position: fixed;
   cursor: pointer;
   top: 20px;
@@ -93,5 +101,43 @@ video {
   border: none;
   color: white;
   font-size: 20px;
+  font-weight: 400;
   font-family: "Aldrich", sans-serif;
 }
+
+#editToggle:hover, #settings:hover {
+    font-weight: 700;
+}
+
+#settings {
+    top: 50px;
+}
+
+body:is(.edit-mode) #editToggle {
+    font-weight: 700;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(80, 80, 80, 0.6);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+#closeSettings {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+

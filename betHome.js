@@ -7,13 +7,15 @@ function updateTime() {
     if (hours === 0) hours = 12;
     else if (hours > 12) hours -= 12;
 
+    
     const minutes = String(now.getMinutes()).padStart(2, "0");
     const seconds = String(now.getSeconds()).padStart(2, "0");
 
     const clock = document.getElementById("clock");
     clock.innerHTML = "";
 
-    const timeStr = `${hours}:${minutes}:${seconds}${isPM ? " PM" : " AM"}`;
+    let timeStr = `${hours}:${minutes}:${seconds}${isPM ? " PM" : " AM"}`;
+    // if (isPM) timeStr = ` ` + timeStr;
     
     clock.innerHTML = timeStr.split('').map(char => {
         if (/\d/.test(char)) {
@@ -66,7 +68,7 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
     });
 
     document.addEventListener("pointerup", () => {
-        // if (activeDrag) saveWidget(widget, clock);
+        if (activeDrag) saveWidget(widget);
         activeDrag = false;
     });
 
@@ -125,7 +127,7 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
     });
 
     document.addEventListener("mouseup", () => {
-        // if (resizing) saveWidget(widget, clock);
+        if (resizing || wide_adj) saveWidget(widget);
         resizing = false;
         wide_adj = false;
     });
@@ -134,30 +136,54 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
 
 // saving and loading widgets
 
-// function saveWidget(widget, clock) {
-//   const id = widget.id;
-//   const fontSize = parseFloat(clock.style.fontSize) || 40;
+function saveWidget(widget) {
+  const id = widget.id;
+  const height = parseFloat(widget.style.height) || widget.getBoundingClientRect().height;
+  const fontSize = height / 1.25;
 
-//   localStorage.setItem(id, JSON.stringify({
-//     left: widget.style.left,
-//     top: widget.style.top,
-//     width: widget.style.width,
-//     height: widget.style.height,
-//     fontSize: fontSize + "px"
-//   }));
-// }
+  localStorage.setItem(id, JSON.stringify({
+    left: widget.style.left,
+    top: widget.style.top,
+    width: widget.style.width,
+    height: widget.style.height,
+    fontSize: fontSize + "px"
+  }));
+}
 
-// function loadWidgets() {
-//   document.querySelectorAll(".widget").forEach(widget => {
-//     const saved = localStorage.getItem(widget.id);
-//     if (!saved) return;
-//     const data = JSON.parse(saved);
-//     widget.style.left = data.left;
-//     widget.style.top = data.top;
-//     widget.style.width = data.width;
-//     widget.style.height = data.height;
-//     clock.style.fontSize = data.fontSize;
-//   });
-// }
+function loadWidgets() {
+  document.querySelectorAll(".widget").forEach(widget => {
+    const saved = localStorage.getItem(widget.id);
+    if (!saved) return;
+    const data = JSON.parse(saved);
 
-// loadWidgets();
+    widget.style.left = data.left;
+    widget.style.top = data.top;
+    widget.style.width = data.width;
+    widget.style.height = data.height;
+
+
+    widget.querySelectorAll("div").forEach(child => {
+      if (!child.classList.contains("resize-handle") && !child.classList.contains("wide-adjust")) {
+        child.style.fontSize = data.fontSize;
+      }
+    });
+  });
+}
+
+loadWidgets();
+
+const settingsButton = document.getElementById("settings");
+const modal = document.getElementById("settingsModal");
+const closeButton = document.getElementById("closeSettings");
+
+settingsButton.addEventListener("click", () => {
+    modal.style.display = "block";
+});
+
+closeSettings.addEventListener("click", () => {
+    modal.style.display = "none";
+});
+
+window.addEventListener("click", e => {
+    if (e.target === modal) modal.style.display = "none";
+});
