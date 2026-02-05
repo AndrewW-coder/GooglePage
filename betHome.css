@@ -2,7 +2,6 @@ html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  background: black;
 }
 
 video {
@@ -12,14 +11,87 @@ video {
   width: 100vw;
   height: 100vh;
   object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
 }
 
+/* widget stuff */
 .widget {
-    position: absolute;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: 200px;
+  height: 100px;
+  z-index: 5;
 }
 
-.widget-content {
-    color : white;
-    font-size: 20px;
-    font-family: "Aldrich", sans-serif;
+#clockWidget {
+    width: 300px;
+    height: 50px;
+}
+
+#clock {
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-variant-numeric: tabular-nums;
+  color: white;
+  font-family: "Aldrich", sans-serif;
+}
+
+
+
+.digit {
+    display: inline-block;
+    width: 0.75em;
+    text-align: center;
+}
+
+.colon {
+    display: inline-block;
+    width: 0.4em;
+    text-align: center;
+}
+
+/* resizing */
+.resize-handle {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  cursor: se-resize;
+  border-radius: 4px;
+}
+
+.wide-adjust {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    right: 0;
+    bottom: 50%;
+    cursor: ew-resize;
+    border-radius: 4px;
+}
+.edit-mode .widget {
+  outline: 2px dashed white;
+  cursor: move;
+}
+
+
+
+/* edit button */
+#editToggle {
+  position: fixed;
+  cursor: pointer;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 20px;
+  font-family: "Aldrich", sans-serif;
 }
