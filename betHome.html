@@ -7,9 +7,7 @@
     </head>
 
     <body>
-        <video autoplay muted loop playsinline>
-            <source src = "Animated/autumn_tree.mp4" type = "video/mp4">
-        </video>
+        <video id = "bgVideo" autoplay muted loop playsinline></video>
 
     <div class = "widget" id = "clockWidget">
         <div id = "clock"></div>
@@ -24,7 +22,12 @@
 
     <div id = "settingsModal" class = "modal">
         <div class = "modal-content">
-            <span id = "closeSettings"> &times; </span>
+            <button id = "closeSettings"> &times; </button>
+
+            <div class = "settingsHeader"> Background </div>
+            
+            <div class = "modalItem" id = "videoList"></div>
+            <input type="file" id = "videoUpload" accept="video/mp4">
         </div>
     </div>
 

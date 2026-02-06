@@ -1,3 +1,18 @@
+let db;
+
+const openReq = indexedDB.open("VideoDB", 1);
+
+openReq.onupgradeneeded = e => {
+    db = e.target.result;
+    db.createObjectStore("videos", { keyPath: "name" });
+};
+
+openReq.onsuccess = e => {
+    db = e.target.result;
+    loadSavedVideos();
+    loadSavedBackground();
+};
+
 // clock
 function updateTime() {
     const now = new Date();
@@ -187,3 +202,112 @@ closeSettings.addEventListener("click", () => {
 window.addEventListener("click", e => {
     if (e.target === modal) modal.style.display = "none";
 });
+
+
+// settings video listing
+const videoList = document.getElementById("videoList");
+
+function addUserVideo(file) { // adding the video to the db
+    const tx = db.transaction("videos", "readwrite");
+    const store = tx.objectStore("videos");
+
+    store.put({
+        name: file.name,
+        file: file
+    });
+    displayVideo(file, file.name);
+}
+
+function displayVideo(file, name) { // the important one
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+
+    const img = document.createElement("img");
+    img.classList.add("video-item");
+    img.dataset.name = name;
+
+    img.onclick = () => {
+        setBackgroundVideo(name);
+    };
+
+    const del = document.createElement("div");
+    del.classList.add("delete-video");
+    del.textContent = '\u00D7';
+
+    del.onclick = e => {
+        e.stopPropagation(); 
+        deleteVideo(name);
+        wrapper.remove();
+    };
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(del);
+
+    const video = document.createElement("video");
+    video.src = URL.createObjectURL(file);
+    video.muted = true;
+
+    video.onloadedmetadata = () => {
+        video.currentTime = 0.5; 
+    };
+
+    video.onseeked = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+        img.src = canvas.toDataURL("image/jpeg");
+    };
+    
+    videoList.appendChild(wrapper);
+}
+
+function deleteVideo(name) {
+    const tx = db.transaction("videos", "readwrite");
+    const store = tx.objectStore("videos");
+
+    store.delete(name);
+}
+
+function loadSavedVideos() {
+
+    const tx = db.transaction("videos", "readonly");
+    const store = tx.objectStore("videos");
+
+    const req = store.getAll();
+
+    req.onsuccess = () => {
+        req.result.forEach(v => {
+            displayVideo(v.file, v.name);
+        });
+    };
+}
+
+document.getElementById("videoUpload").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (file) addUserVideo(file);
+});
+
+function setBackgroundVideo(name) {
+    const tx = db.transaction("videos", "readonly");
+    const store = tx.objectStore("videos");
+    localStorage.setItem("currentBackground", name);
+
+    const req = store.get(name);
+
+    req.onsuccess = () => {
+        const blob = req.result.file;
+        const url = URL.createObjectURL(blob);
+
+        const video = document.getElementById("bgVideo");
+        video.src = url;
+        video.load(); 
+    };
+}
+
+function loadSavedBackground() {
+    const saved = localStorage.getItem("currentBackground");
+    if (saved) {
+        setBackgroundVideo(saved);
+    }
+}
