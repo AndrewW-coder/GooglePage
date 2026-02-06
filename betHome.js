@@ -17,7 +17,7 @@ openReq.onsuccess = e => {
 
 
 
-// clock
+// clock stuff
 function updateTime() {
     const now = new Date();
 
@@ -34,7 +34,7 @@ function updateTime() {
     clock.innerHTML = "";
 
     let timeStr = `${hours}:${minutes}:${seconds}${isPM ? " PM" : " AM"}`;
-    // if (isPM) timeStr = ` ` + timeStr;
+
     
     clock.innerHTML = timeStr.split('').map(char => {
         if (/\d/.test(char)) {
@@ -128,7 +128,7 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
 
     wide.addEventListener("mousedown", e => {
         if (!editMode) return;
-        wide_adj = true;
+        wide_adj = true;    
         e.preventDefault();
     });
 
@@ -137,12 +137,8 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
 
         const rect = widget.getBoundingClientRect();
         let newWidth = e.clientX - rect.left;
-        let ratio = rect.height/rect.width;
-
-        newWidth = Math.max(50 / ratio, Math.min(newWidth, 2000));
-
+        newWidth = Math.min(newWidth, 2000); 
         widget.style.width = newWidth + "px";
-
     });
 
     document.addEventListener("mouseup", () => {
@@ -194,6 +190,7 @@ loadWidgets();
 const settingsButton = document.getElementById("settings");
 const modal = document.getElementById("settingsModal");
 const closeButton = document.getElementById("closeSettings");
+const bg = document.getElementById("bgVideo");
 
 settingsButton.addEventListener("click", () => {
     modal.style.display = "block";
@@ -203,8 +200,13 @@ closeSettings.addEventListener("click", () => {
     modal.style.display = "none";
 });
 
+
 window.addEventListener("click", e => {
     if (e.target === modal) modal.style.display = "none";
+    // if (e.target === bg) {
+    //     editMode = false;
+    //     document.body.classList.toggle("edit-mode");
+    // }
 });
 
 
