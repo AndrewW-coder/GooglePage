@@ -153,6 +153,7 @@ body:is(.edit-mode) #editToggle {
 .modalItem {
     display: block;
     position: relative;
+    margin-bottom: 20px;
 }
 
 /* setting items */
@@ -180,6 +181,7 @@ body:is(.edit-mode) #editToggle {
     font-size: 30px;
     display: block;
     position: relative;
+    margin-bottom: 20px;
 }
 
 /* background video list */
@@ -189,7 +191,7 @@ body:is(.edit-mode) #editToggle {
     
     width: 28vw;
     display: grid;
-    outline: 1px dashed magenta;
+    /* outline: 1px dashed magenta; */
     grid-template-columns: repeat(auto-fill, minmax(12vw, 1fr));
     gap: 15px;
 
@@ -229,6 +231,20 @@ body:is(.edit-mode) #editToggle {
 }
 
 .delete-video:hover {
+    font-weight: 700;
+}
+
+#videoUpload {
+    display: none;
+}
+
+#upLoad {
+    font-weight: 400;
+    width: 70px;
+    border: 1px dashed magenta;
+}
+
+#upLoad:hover {
     font-weight: 700;
 }
 

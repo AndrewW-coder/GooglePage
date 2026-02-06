@@ -1,5 +1,6 @@
 let db;
-
+const videoCache = new Map();
+const blobURLs = new Map();
 const openReq = indexedDB.open("VideoDB", 1);
 
 openReq.onupgradeneeded = e => {
@@ -9,9 +10,12 @@ openReq.onupgradeneeded = e => {
 
 openReq.onsuccess = e => {
     db = e.target.result;
-    loadSavedVideos();
     loadSavedBackground();
+    loadSavedVideos();
+    preloadAllVideos();
 };
+
+
 
 // clock
 function updateTime() {
@@ -218,7 +222,7 @@ function addUserVideo(file) { // adding the video to the db
     displayVideo(file, file.name);
 }
 
-function displayVideo(file, name) { // the important one
+function displayVideo(file, name) {
     const wrapper = document.createElement("div");
     wrapper.style.position = "relative";
 
@@ -244,25 +248,38 @@ function displayVideo(file, name) { // the important one
     wrapper.appendChild(del);
 
     const video = document.createElement("video");
-    video.src = URL.createObjectURL(file);
+    const blobURL = URL.createObjectURL(file);
+    video.src = blobURL;
     video.muted = true;
 
     video.onloadedmetadata = () => {
         video.currentTime = 0.5; 
     };
 
-    video.onseeked = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext("2d").drawImage(video, 0, 0);
-        img.src = canvas.toDataURL("image/jpeg");
+    video.onseeked = async () => {
+        const bitmap = await createImageBitmap(video);
+        try {
+            const canvas = document.createElement("canvas");
+            canvas.width = bitmap.width;
+            canvas.height = bitmap.height;
+            canvas.getContext("2d", { alpha: false }).drawImage(bitmap, 0, 0);
+            img.src = canvas.toDataURL("image/jpeg", 0.8);
+        } finally {
+            bitmap.close();
+            URL.revokeObjectURL(blobURL); 
+        }
     };
     
     videoList.appendChild(wrapper);
 }
 
 function deleteVideo(name) {
+    // Clean up cached blob URL if it exists
+    if (videoCache.has(name)) {
+        URL.revokeObjectURL(videoCache.get(name));
+        videoCache.delete(name);
+    }
+    
     const tx = db.transaction("videos", "readwrite");
     const store = tx.objectStore("videos");
 
@@ -289,25 +306,46 @@ document.getElementById("videoUpload").addEventListener("change", e => {
 });
 
 function setBackgroundVideo(name) {
+    localStorage.setItem("currentBackground", name);
+    
+    if (videoCache.has(name)) {
+        document.getElementById("bgVideo").src = videoCache.get(name);
+        return;
+    }
+    
     const tx = db.transaction("videos", "readonly");
     const store = tx.objectStore("videos");
-    localStorage.setItem("currentBackground", name);
-
     const req = store.get(name);
 
     req.onsuccess = () => {
-        const blob = req.result.file;
-        const url = URL.createObjectURL(blob);
-
-        const video = document.getElementById("bgVideo");
-        video.src = url;
-        video.load(); 
+        const url = URL.createObjectURL(req.result.file);
+        videoCache.set(name, url);
+        document.getElementById("bgVideo").src = url;
     };
 }
 
 function loadSavedBackground() {
     const saved = localStorage.getItem("currentBackground");
     if (saved) {
-        setBackgroundVideo(saved);
+        setBackgroundVideo(saved); 
     }
 }
+
+function preloadAllVideos() {
+    const tx = db.transaction("videos", "readonly");
+    const req = tx.objectStore("videos").getAll();
+    
+    req.onsuccess = () => {
+        req.result.forEach(v => {
+            if (!videoCache.has(v.name)) {
+                const url = URL.createObjectURL(v.file);
+                videoCache.set(v.name, url);
+            }
+        });
+    };
+}
+
+window.addEventListener('beforeunload', () => { // cleanup when user navigates away
+    videoCache.forEach(url => URL.revokeObjectURL(url));
+    videoCache.clear();
+});
