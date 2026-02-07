@@ -9,13 +9,24 @@
     <body>
         <video id = "bgVideo" autoplay muted loop preload="auto"></video>
 
-    <div class = "widget" id = "clockWidget">
-        <div id = "clock"></div>
-        <div class = "resize-handle"></div>
-        <div class = "wide-adjust"></div>
-    </div>
+        <div class = "widget" id = "clockWidget">
+            <div id = "clock"></div>
+            <div class = "resize-handle"></div>
+            <div class = "wide-adjust"></div>
+        </div>
 
-    
+        <div class = "widget" id = "toDoListWidget">
+            <div id = "toDoHead">To-Do List</div>
+            <div id = "toDoContent">
+                <div id = "toDoInputContainer">
+                    <input type="text" id="toDoInput" placeholder="Add a task...">
+                    <button id="addTask">+</button>
+                </div>
+                <ul id="toDoList"></ul>
+            </div>
+            <div class = "resize-handle"></div>
+            <div class = "wide-adjust"></div>
+        </div> 
 
     <button id = "editToggle"> &#9874; </button>
     <button id = "settings"> &#9881; </button>

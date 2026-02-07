@@ -47,9 +47,87 @@ function updateTime() {
     }).join('');
 
 };
+
 updateTime();
 setInterval(updateTime, 1000);
 
+const toDoInput = document.getElementById("toDoInput");
+const addTaskBtn = document.getElementById("addTask");
+const toDoList = document.getElementById("toDoList");
+
+function loadToDos() {
+    const saved = localStorage.getItem("toDoItems");
+    if (saved) {
+        const items = JSON.parse(saved);
+        items.forEach(item => {
+            createToDoElement(item.text, item.completed, false);
+        });
+    }
+}
+
+function saveToDos() {
+    const items = [];
+    document.querySelectorAll(".todo-item").forEach(item => {
+        items.push({
+            text: item.querySelector(".todo-text").textContent,
+            completed: item.classList.contains("completed")
+        });
+    });
+    localStorage.setItem("toDoItems", JSON.stringify(items));
+}
+
+function createToDoElement(text, completed = false, save = true) {
+    const li = document.createElement("li");
+    li.className = "todo-item" + (completed ? " completed" : "");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "todo-checkbox";
+    checkbox.checked = completed;
+    
+    checkbox.addEventListener("change", () => {
+        li.classList.toggle("completed");
+        saveToDos();
+    });
+
+    const span = document.createElement("span");
+    span.className = "todo-text";
+    span.textContent = text;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "todo-delete";
+    deleteBtn.innerHTML = "&times;";
+    deleteBtn.addEventListener("click", () => {
+        li.remove();
+        saveToDos();
+    });
+
+    li.appendChild(checkbox);
+    li.appendChild(span);
+    li.appendChild(deleteBtn);
+    toDoList.appendChild(li);
+
+    if (save) saveToDos();
+}
+
+function addTask() {
+    const text = toDoInput.value.trim();
+    if (text) {
+        createToDoElement(text);
+        toDoInput.value = "";
+    }
+}
+
+addTaskBtn.addEventListener("click", addTask);
+
+toDoInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") {
+        addTask();
+    }
+});
+
+
+loadToDos();
 // making sure each widget has its own customizable things
 
 let editMode = false;
@@ -71,6 +149,7 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
     widget.addEventListener("pointerdown", e => {
         if (!editMode) return;
         if (e.target === handle || e.target === wide) return; // ignore if resizing
+        if(resizing || wide_adj) return;
 
         activeDrag = true;
         const rect = widget.getBoundingClientRect();
@@ -93,10 +172,12 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
 
     // resizing each widget
     let resizing = false;
-
+    let resizingStartRatio = 0;
     handle.addEventListener("mousedown", e => {
-        if (!editMode) return;
+        if (!editMode || wide_adj) return;
         resizing = true;
+        const rect = widget.getBoundingClientRect();
+        resizingStartRatio = rect.height/rect.width;
         e.preventDefault();
     });
 
@@ -104,30 +185,32 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
         if (!resizing) return;
 
         const rect = widget.getBoundingClientRect();
-        let ratio = rect.height/rect.width;
         let newWidth = e.clientX - rect.left;
-        let newHeight = newWidth / ratio;
+        let newHeight = newWidth * resizingStartRatio;
 
-        newWidth = Math.max(50 / ratio, Math.min(newWidth, 2000));
-        newHeight = newWidth * ratio;
+        newWidth = Math.max(50 / resizingStartRatio, Math.min(newWidth, 2000));
+        newHeight = newWidth * resizingStartRatio;
 
         widget.style.width = newWidth + "px";
         widget.style.height = newHeight + "px";
-
-        const fontSize = newHeight / 1.25;
+        
+        let fontSize = 30;
+        if(widget.id == "clockWidget") fontSize = newHeight / 1.25;
 
         widget.querySelectorAll("div").forEach(child => {
-            if (!child.classList.contains("resize-handle")) {
+            if (!child.classList.contains("resize-handle") && !child.classList.contains("wide-adjust")) {
                 child.style.fontSize = fontSize + "px";
             }
         });
+
+        
     });
 
 
     let wide_adj = false;
 
     wide.addEventListener("mousedown", e => {
-        if (!editMode) return;
+        if (!editMode || resizing) return;
         wide_adj = true;    
         e.preventDefault();
     });
@@ -136,8 +219,9 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
         if (!wide_adj) return;
 
         const rect = widget.getBoundingClientRect();
+        // ratio = rect.height/rect.width;
         let newWidth = e.clientX - rect.left;
-        newWidth = Math.min(newWidth, 2000); 
+        // newWidth = Math.max(50 / ratio, Math.min(newWidth, 2000)); 
         widget.style.width = newWidth + "px";
     });
 
@@ -152,24 +236,42 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
 // saving and loading widgets
 
 function saveWidget(widget) {
-  const id = widget.id;
-  const height = parseFloat(widget.style.height) || widget.getBoundingClientRect().height;
-  const fontSize = height / 1.25;
+    const id = widget.id;
+    let fontSize = "40px"; // default
+    
+    if (widget.id === "clockWidget") {
+        const digit = widget.querySelector(".digit");
+        if (digit) {
+            fontSize = window.getComputedStyle(digit).fontSize;
+        }
+    } else {
+        const contentDiv = widget.querySelector("div:not(.resize-handle):not(.wide-adjust)");
+        if (contentDiv) {
+            fontSize = window.getComputedStyle(contentDiv).fontSize;
+        }
+    }
 
-  localStorage.setItem(id, JSON.stringify({
-    left: widget.style.left,
-    top: widget.style.top,
-    width: widget.style.width,
-    height: widget.style.height,
-    fontSize: fontSize + "px"
-  }));
+    // console.log(fontSize);
+
+    localStorage.setItem(id, JSON.stringify({
+        left: widget.style.left,
+        top: widget.style.top,
+        width: widget.style.width,
+        height: widget.style.height,
+        fontSize: fontSize
+    }));
 }
 
 function loadWidgets() {
   document.querySelectorAll(".widget").forEach(widget => {
     const saved = localStorage.getItem(widget.id);
+    
     if (!saved) return;
     const data = JSON.parse(saved);
+
+    // console.log(widget.id);
+    // console.log(data.fontSize);
+
 
     widget.style.left = data.left;
     widget.style.top = data.top;
@@ -268,7 +370,6 @@ function displayVideo(file, name) {
             img.src = canvas.toDataURL("image/jpeg", 0.8);
         } finally {
             bitmap.close();
-            URL.revokeObjectURL(blobURL); 
         }
     };
     
@@ -276,7 +377,6 @@ function displayVideo(file, name) {
 }
 
 function deleteVideo(name) {
-    // Clean up cached blob URL if it exists
     if (videoCache.has(name)) {
         URL.revokeObjectURL(videoCache.get(name));
         videoCache.delete(name);
@@ -346,8 +446,3 @@ function preloadAllVideos() {
         });
     };
 }
-
-window.addEventListener('beforeunload', () => { // cleanup when user navigates away
-    videoCache.forEach(url => URL.revokeObjectURL(url));
-    videoCache.clear();
-});
