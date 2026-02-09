@@ -51,6 +51,8 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 1000);
 
+// todo stuff
+
 const toDoInput = document.getElementById("toDoInput");
 const addTaskBtn = document.getElementById("addTask");
 const toDoList = document.getElementById("toDoList");
@@ -353,23 +355,26 @@ function displayVideo(file, name) {
 
     const video = document.createElement("video");
     const blobURL = URL.createObjectURL(file);
+    blobURLs.set(name, blobURL); 
     video.src = blobURL;
     video.muted = true;
+    video.preload = "metadata";
 
     video.onloadedmetadata = () => {
-        video.currentTime = 0.5; 
+        if (video.duration && isFinite(video.duration)) {
+            video.currentTime = Math.min(0.5, video.duration / 2);
+        }
     };
 
-    video.onseeked = async () => {
-        const bitmap = await createImageBitmap(video);
+    video.onseeked = () => {
         try {
             const canvas = document.createElement("canvas");
-            canvas.width = bitmap.width;
-            canvas.height = bitmap.height;
-            canvas.getContext("2d", { alpha: false }).drawImage(bitmap, 0, 0);
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
             img.src = canvas.toDataURL("image/jpeg", 0.8);
-        } finally {
-            bitmap.close();
+        } catch (error) {
+            console.error("Error creating thumbnail:", error);
         }
     };
     
@@ -389,15 +394,17 @@ function deleteVideo(name) {
 }
 
 function loadSavedVideos() {
-
     const tx = db.transaction("videos", "readonly");
     const store = tx.objectStore("videos");
-
     const req = store.getAll();
 
     req.onsuccess = () => {
         req.result.forEach(v => {
-            displayVideo(v.file, v.name);
+            if (v.file) {
+                displayVideo(v.file, v.name, true);
+            } else {
+                console.error("No file found for:", v.name);
+            }
         });
     };
 }
@@ -410,8 +417,8 @@ document.getElementById("videoUpload").addEventListener("change", e => {
 function setBackgroundVideo(name) {
     localStorage.setItem("currentBackground", name);
     
-    if (videoCache.has(name)) {
-        document.getElementById("bgVideo").src = videoCache.get(name);
+    if (blobURLs.has(name)) {
+        document.getElementById("bgVideo").src = blobURLs.get(name);
         return;
     }
     
@@ -420,9 +427,9 @@ function setBackgroundVideo(name) {
     const req = store.get(name);
 
     req.onsuccess = () => {
-        const url = URL.createObjectURL(req.result.file);
-        videoCache.set(name, url);
-        document.getElementById("bgVideo").src = url;
+        const blobURL = URL.createObjectURL(req.result.file);
+        blobURLs.set(name, blobURL);
+        document.getElementById("bgVideo").src = blobURL;
     };
 }
 
@@ -439,9 +446,8 @@ function preloadAllVideos() {
     
     req.onsuccess = () => {
         req.result.forEach(v => {
-            if (!videoCache.has(v.name)) {
-                const url = URL.createObjectURL(v.file);
-                videoCache.set(v.name, url);
+            if (!blobURLs.has(v.name)) {
+                blobURLs.set(v.name, URL.createObjectURL(v.file));
             }
         });
     };
