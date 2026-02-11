@@ -33,10 +33,15 @@ function updateTime() {
     const clock = document.getElementById("clock");
     clock.innerHTML = "";
 
-    let timeStr = `${hours}:${minutes}:${seconds}${isPM ? " PM" : " AM"}`;
+    const showSeconds = localStorage.getItem("showSeconds") !== "false";
+    let timeStr = showSeconds 
+        ? `${hours}:${minutes}:${seconds}${isPM ? " PM" : " AM"}`
+        : `${hours}:${minutes}${isPM ? " PM" : " AM"}`;
 
-    
-    clock.innerHTML = timeStr.split('').map(char => {
+    if(hours < 10) {
+        clock.innerHTML += `<span class="digit"> </span>`;
+    }
+    clock.innerHTML += timeStr.split('').map(char => {
         if (/\d/.test(char)) {
             return `<span class="digit">${char}</span>`;
         } else if (char === ':') {
@@ -452,3 +457,39 @@ function preloadAllVideos() {
         });
     };
 }
+
+
+// toggling stuff
+function loadToggles() {
+    const clockToggle = localStorage.getItem("showClock") !== "false";
+    const todoToggle = localStorage.getItem("showToDo") !== "false";
+    const secondsToggle = localStorage.getItem("showSeconds") !== "false";
+
+    document.getElementById("toggleClock").checked = clockToggle;
+    document.getElementById("toggleToDo").checked = todoToggle;
+    document.getElementById("toggleSeconds").checked = secondsToggle;
+
+    document.getElementById("clockWidget").style.display = clockToggle ? "block" : "none";
+    document.getElementById("toDoListWidget").style.display = todoToggle ? "block" : "none";
+
+}
+
+document.getElementById("toggleClock").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showClock", show);
+    document.getElementById("clockWidget").style.display = show ? "block" : "none";
+});
+
+document.getElementById("toggleToDo").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showToDo", show);
+    document.getElementById("toDoListWidget").style.display = show ? "block" : "none";
+});
+
+document.getElementById("toggleSeconds").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showSeconds", show);
+    updateTime();
+});
+
+loadToggles();

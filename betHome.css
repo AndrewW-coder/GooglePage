@@ -1,3 +1,12 @@
+/* Z-indexes
+    video: 0
+    widgets: 5
+    todo: 1000-1001
+    edit/settings: 10
+    handles: 1003
+    modal: 1000-1003
+*/
+
 html, body {
   margin: 0;
   height: 100%;
@@ -13,30 +22,30 @@ input {
 }
 
 button {
-  border: none;
-  background: none; 
-  padding: 0;
+    border: none;
+    background: none; 
+    padding: 0;
 }
 
 video {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
-  z-index: 0;
-  pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
 }
 
 /* widget stuff */
 .widget {
-  position: absolute;
-  top: 100px;
-  left: 100px;
-  width: 200px;
-  height: 100px;
-  z-index: 5;
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    width: 200px;
+    height: 100px;
+    z-index: 5;
 }
 
 #clockWidget {
@@ -45,14 +54,14 @@ video {
 }
 
 #clock {
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  font-variant-numeric: tabular-nums;
-  color: white;
-  font-family: "Aldrich", sans-serif;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-variant-numeric: tabular-nums;
+    color: white;
+    font-family: "Aldrich", sans-serif;
 }
 
 #toDoListWidget {
@@ -90,9 +99,6 @@ video {
 #toDoInput {
     flex: 1;
     padding: 8px;
-    /* background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3); */
-    /* text-decoration: underline; */
     background: transparent;
     border-radius: 4px;
     color: rgb(255, 255, 255);
@@ -184,7 +190,7 @@ video {
     border-radius: 4px;
     color: white;
     font-family: "Aldrich", sans-serif;
-    font-size: 14px;
+    font-size: 20px;
 }
 
 .todo-item:hover {
@@ -441,11 +447,54 @@ body:is(.edit-mode) #editToggle {
 #upLoad {
     font-weight: 400;
     width: 70px;
-    /* border-radius: 3px;
-    background-color: rgba(80, 80, 80, 0.6); */
 }
 
 #upLoad:hover {
     font-weight: 700;
 }
 
+/* Toggle switches */
+.toggle-container {
+    margin-bottom: 15px;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.toggle-checkbox {
+    display: none;
+}
+
+.toggle-slider {
+    position: relative;
+    width: 50px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    transition: background 0.3s;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s;
+}
+
+.toggle-checkbox:checked + .toggle-slider {
+    background: rgba(100, 200, 100, 0.6);
+}
+
+.toggle-checkbox:checked + .toggle-slider::before {
+    transform: translateX(26px);
+}
