@@ -257,12 +257,22 @@ video {
     display: inline-block;
     width: 0.75em;
     text-align: center;
+    /* font-weight: 1000; */
 }
 
 .colon {
     display: inline-block;
     width: 0.4em;
     text-align: center;
+    /* font-weight: 1000; */
+}
+
+.ampm {
+    display: inline-block;
+    width: 1.5em;
+    text-align: center;
+    font-family: "Aldrich", sans-serif;
+    letter-spacing: -0.05em;
 }
 
 /* resizing */
@@ -497,4 +507,67 @@ body:is(.edit-mode) #editToggle {
 
 .toggle-checkbox:checked + .toggle-slider::before {
     transform: translateX(26px);
+}
+
+#cityInput {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    color: white;
+    font-family: "Aldrich", sans-serif;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+#cityInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#saveCity {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-family: "Aldrich", sans-serif;
+}
+
+#saveCity:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+#weatherWidget {
+    width: 250px;
+    height: 150px;
+}
+
+#weather {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: "Aldrich", sans-serif;
+    font-size: 20px;
+}
+
+#weatherTemp {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+#weatherDesc {
+    font-size: 16px;
+    opacity: 0.8;
+    text-transform: capitalize;
+}
+
+#weatherLocation {
+    font-size: 18px;
+    opacity: 0.9;
 }

@@ -29,6 +29,16 @@
             <div class = "resize-handle"></div>
             <div class = "wide-adjust"></div>
         </div> 
+        
+        <div class="widget" id="weatherWidget">
+            <div id="weather">
+                <div id="weatherLocation"></div>
+                <div id="weatherTemp"></div>
+                <div id="weatherDesc"></div>
+            </div>
+            <div class="resize-handle"></div>
+            <div class="wide-adjust"></div>
+        </div>
 
     <button id = "editToggle"> &#9874; </button>
     <button id = "settings"> &#9881; </button>
@@ -42,12 +52,36 @@
             <div class = "modalItem" id = "videoList"></div>
             <input type="file" id = "videoUpload" accept="video/mp4">
             <label for="videoUpload" id = "upLoad"> Select file </label>
+
+            <div class="settingsHeader">Location</div>
+            <div class="modalItem">
+                <input type="text" id="cityInput" placeholder="Enter city name (e.g., Seattle)">
+                <button id="saveCity">Save</button>
+            </div>
+
+
             <div class = "settingsHeader"> Toggles </div>
 
             <div class="toggle-container">
                 <label class="toggle-label">
                     <span>Show Clock</span>
                     <input type="checkbox" id="toggleClock" class="toggle-checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-container">
+                <label class="toggle-label">
+                    <span>Show Seconds</span>
+                    <input type="checkbox" id="toggleSeconds" class="toggle-checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-container">
+                <label class="toggle-label">
+                    <span>Show Colons</span>
+                    <input type="checkbox" id="toggleColons" class="toggle-checkbox" checked>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -62,11 +96,13 @@
 
             <div class="toggle-container">
                 <label class="toggle-label">
-                    <span>Show Seconds</span>
-                    <input type="checkbox" id="toggleSeconds" class="toggle-checkbox" checked>
+                    <span>Show Weather</span>
+                    <input type="checkbox" id="toggleWeather" class="toggle-checkbox" checked>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
+
+            
 
         </div>
     </div>

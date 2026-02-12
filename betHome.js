@@ -35,21 +35,27 @@ function updateTime() {
 
     const showSeconds = localStorage.getItem("showSeconds") !== "false";
     let timeStr = showSeconds 
-        ? `${hours}:${minutes}:${seconds}${isPM ? " PM" : " AM"}`
-        : `${hours}:${minutes}${isPM ? " PM" : " AM"}`;
+        ? `${hours}:${minutes}:${seconds}`
+        : `${hours}:${minutes}`;
 
     if(hours < 10) {
         clock.innerHTML += `<span class="digit"> </span>`;
     }
+
+    const showColons = localStorage.getItem("showColons") !== "false";
+
     clock.innerHTML += timeStr.split('').map(char => {
         if (/\d/.test(char)) {
             return `<span class="digit">${char}</span>`;
         } else if (char === ':') {
-            return `<span class="colon">:</span>`;
+            if(showColons) return `<span class="colon">:</span>`;
+            else return `<span class="colon"> </span>`
         } else {
             return char;
         }
     }).join('');
+
+    clock.innerHTML += `<span class="ampm">${isPM ? " PM" : " AM"}</span>`;
 
 };
 
@@ -458,19 +464,119 @@ function preloadAllVideos() {
     };
 }
 
+// weather
+
+async function getWeather(cityName) {
+    try {
+        if (!cityName) {
+            document.getElementById("weatherLocation").textContent = "Set location";
+            document.getElementById("weatherTemp").textContent = "--°F";
+            document.getElementById("weatherDesc").textContent = "in settings";
+            return;
+        }
+
+        const geoResponse = await fetch(
+            `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=en&format=json`
+        );
+        const geoData = await geoResponse.json();
+        
+        if (!geoData.results || geoData.results.length === 0) {
+            document.getElementById("weatherTemp").textContent = "City not found";
+            return;
+        }
+
+        const lat = geoData.results[0].latitude;
+        const lon = geoData.results[0].longitude;
+        const displayName = geoData.results[0].name;
+
+        // Fetch weather data
+        const response = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=auto`
+        );
+        const data = await response.json();
+
+        const weatherDescriptions = {
+            0: "Clear sky",
+            1: "Mainly clear",
+            2: "Partly cloudy",
+            3: "Overcast",
+            45: "Foggy",
+            48: "Foggy",
+            51: "Light drizzle",
+            53: "Drizzle",
+            55: "Heavy drizzle",
+            61: "Light rain",
+            63: "Rain",
+            65: "Heavy rain",
+            71: "Light snow",
+            73: "Snow",
+            75: "Heavy snow",
+            77: "Snow grains",
+            80: "Light showers",
+            81: "Showers",
+            82: "Heavy showers",
+            85: "Light snow showers",
+            86: "Snow showers",
+            95: "Thunderstorm",
+            96: "Thunderstorm with hail",
+            99: "Thunderstorm with hail"
+        };
+
+        const weatherCode = data.current.weather_code;
+        const description = weatherDescriptions[weatherCode] || "Unknown";
+
+        document.getElementById("weatherLocation").textContent = displayName;
+        document.getElementById("weatherTemp").textContent = Math.round(data.current.temperature_2m) + "\u00B0F";
+        document.getElementById("weatherDesc").textContent = description;
+    } catch (error) {
+        console.error("Weather fetch error:", error);
+        document.getElementById("weatherTemp").textContent = "Error loading";
+    }
+}
+
+document.getElementById("saveCity").addEventListener("click", () => {
+    const city = document.getElementById("cityInput").value.trim();
+    if (city) {
+        localStorage.setItem("weatherCity", city);
+        getWeather(city);
+    }
+});
+
+function loadWeatherCity() {
+    const savedCity = localStorage.getItem("weatherCity");
+    if (savedCity) {
+        document.getElementById("cityInput").value = savedCity;
+        getWeather(savedCity);
+    } else {
+        getWeather(null); 
+    }
+}
+
+loadWeatherCity();
+
+setInterval(() => {
+    const city = localStorage.getItem("weatherCity");
+    if (city) getWeather(city);
+}, 600000);
 
 // toggling stuff
 function loadToggles() {
     const clockToggle = localStorage.getItem("showClock") !== "false";
     const todoToggle = localStorage.getItem("showToDo") !== "false";
     const secondsToggle = localStorage.getItem("showSeconds") !== "false";
+    const colonsToggle = localStorage.getItem("showColons") !== "false";
+    const weatherToggle = localStorage.getItem("showWeather") !== "false";
 
     document.getElementById("toggleClock").checked = clockToggle;
     document.getElementById("toggleToDo").checked = todoToggle;
     document.getElementById("toggleSeconds").checked = secondsToggle;
+    document.getElementById("toggleColons").checked = colonsToggle;
+    document.getElementById("toggleWeather").checked = weatherToggle;
 
     document.getElementById("clockWidget").style.display = clockToggle ? "block" : "none";
     document.getElementById("toDoListWidget").style.display = todoToggle ? "block" : "none";
+    document.getElementById("weatherWidget").style.display = weatherToggle ? "block" : "none";
+
 
 }
 
@@ -492,4 +598,17 @@ document.getElementById("toggleSeconds").addEventListener("change", e => {
     updateTime();
 });
 
+document.getElementById("toggleColons").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showColons", show);
+    updateTime();
+});
+
+document.getElementById("toggleWeather").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showWeather", show);
+    document.getElementById("weatherWidget").style.display = show ? "block" : "none";
+});
+
 loadToggles();
+
