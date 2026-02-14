@@ -27,7 +27,7 @@ button {
     padding: 0;
 }
 
-video {
+video, #bgImage {
     position: fixed;
     top: 0;
     left: 0;
@@ -36,6 +36,10 @@ video {
     object-fit: cover;
     z-index: 0;
     pointer-events: none;
+}
+
+#bgImage {
+    display: none;
 }
 
 /* widget stuff */
@@ -365,6 +369,25 @@ body:is(.edit-mode) #editToggle {
     padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
+    overflow-y: auto;
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .modalItem {
@@ -411,6 +434,7 @@ body:is(.edit-mode) #editToggle {
     grid-template-columns: repeat(auto-fill, minmax(12vw, 1fr));
     gap: 15px;
 
+    min-height: 200px;
     max-height: 50vh;
     overflow-y: auto;
 }
@@ -420,6 +444,23 @@ body:is(.edit-mode) #editToggle {
     height: auto;
     object-fit: cover;
 
+}
+
+#videoList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#videoList::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+#videoList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+#videoList::-webkit-scrollbar-thumb:hover {
+    background: rgba(50, 47, 47, 0.5);
 }
 
 .video-item {
@@ -570,4 +611,158 @@ body:is(.edit-mode) #editToggle {
 #weatherLocation {
     font-size: 18px;
     opacity: 0.9;
+}
+
+
+#shortcutsWidget {
+    width: 400px;
+    height: 200px;
+}
+
+#shortcuts {
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+    overflow-y: auto;
+}
+
+#shortcutsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 5px;
+}
+
+.shortcut-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.shortcut-item:hover {
+    transform: scale(1.05);
+}
+
+.shortcut-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 2px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    margin-bottom: 0px; 
+}
+
+.shortcut-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 3px;
+}
+
+.shortcut-name {
+    font-family: "Aldrich", sans-serif;
+    font-size: 12px;
+    text-align: center;
+    word-break: break-word;
+    margin-top: 0px;
+}
+
+body.hide-shortcut-names .shortcut-name {
+    display: none;
+}
+
+
+#shortcutName, #shortcutURL, #shortcutIcon {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    color: white;
+    font-family: "Aldrich", sans-serif;
+    font-size: 14px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+#shortcutName::placeholder,
+#shortcutURL::placeholder,
+#shortcutIcon::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#addShortcut {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-family: "Aldrich", sans-serif;
+}
+
+#addShortcut:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+#shortcutsList {
+    margin-top: 10px;
+}
+
+.shortcut-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.shortcut-list-item span {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.shortcut-list-delete {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.6;
+}
+
+.shortcut-list-delete:hover {
+    opacity: 1;
+}
+
+#shortcutIconSelect {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    color: white;
+    font-family: "Aldrich", sans-serif;
+    font-size: 14px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+#shortcutIconSelect option {
+    background: rgba(60, 60, 60, 0.95);
+    color: white;
+}
+
+.shortcut-icon svg {
+    width: 70%;
+    height: 70%;
 }
