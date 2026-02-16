@@ -284,9 +284,7 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
         if (!wide_adj) return;
 
         const rect = widget.getBoundingClientRect();
-        // ratio = rect.height/rect.width;
         let newWidth = e.clientX - rect.left;
-        // newWidth = Math.max(50 / ratio, Math.min(newWidth, 2000)); 
         widget.style.width = newWidth + "px";
     });
 
@@ -331,31 +329,34 @@ function saveWidget(widget) {
 }
 
 function loadWidgets() {
-  document.querySelectorAll(".widget").forEach(widget => {
-    const saved = localStorage.getItem(widget.id);
+    document.querySelectorAll(".widget").forEach(widget => {
+        const saved = localStorage.getItem(widget.id);
+        
+        if (!saved) return;
+        const data = JSON.parse(saved);
+
+        widget.style.left = data.left;
+        widget.style.top = data.top;
+        widget.style.width = data.width;
+        widget.style.height = data.height;
+
+        if(widget.id == "searchWidget" || widget.id == "weatherWidget" || widget.id == "todoListWidget" || widget.id == "shortcutsWidget") return;
+
+        // currently only clock effected
+        widget.querySelectorAll("div").forEach(child => {
+            if (!child.classList.contains("resize-handle") && !child.classList.contains("wide-adjust")) {
+                child.style.fontSize = data.fontSize;
+            }
+        });
     
-    if (!saved) return;
-    const data = JSON.parse(saved);
 
-    widget.style.left = data.left;
-    widget.style.top = data.top;
-    widget.style.width = data.width;
-    widget.style.height = data.height;
-
-    widget.querySelectorAll("div").forEach(child => {
-        if (!child.classList.contains("resize-handle") && !child.classList.contains("wide-adjust")) {
-            child.style.fontSize = data.fontSize;
-        }
+        // if (widget.id === "weatherWidget") {
+        //     const baseFontSize = parseFloat(data.fontSize);
+        //     widget.querySelector("#weatherTemp").style.fontSize = (baseFontSize * 1.33) + "px";
+        //     widget.querySelector("#weatherDesc").style.fontSize = (baseFontSize * 0.53) + "px";
+        //     widget.querySelector("#weatherLocation").style.fontSize = (baseFontSize * 0.6) + "px";
+        // }
     });
-    
-
-    if (widget.id === "weatherWidget") {
-        const baseFontSize = parseFloat(data.fontSize);
-        widget.querySelector("#weatherTemp").style.fontSize = (baseFontSize * 1.33) + "px";
-        widget.querySelector("#weatherDesc").style.fontSize = (baseFontSize * 0.53) + "px";
-        widget.querySelector("#weatherLocation").style.fontSize = (baseFontSize * 0.6) + "px";
-    }
-  });
 }
 
 loadWidgets();
@@ -503,12 +504,10 @@ function setBackgroundVideo(name) {
             const bgImage = document.getElementById("bgImage");
             
             if (req.result.type === 'image') {
-                // Show image, hide video
                 bgVideo.style.display = "none";
                 bgImage.style.display = "block";
                 bgImage.src = blobURLs.get(name);
             } else {
-                // Show video, hide image
                 bgImage.style.display = "none";
                 bgVideo.style.display = "block";
                 bgVideo.src = blobURLs.get(name);
@@ -755,7 +754,7 @@ document.getElementById("addShortcut").addEventListener("click", () => {
         if (iconSelect === "custom") {
             icon = customIcon || "🔗";
         } else if (iconSelect && iconLibrary[iconSelect]) {
-            icon = iconSelect; // Store the key, not the SVG
+            icon = iconSelect; 
         } else {
             icon = "🔗";
         }
@@ -780,6 +779,90 @@ document.getElementById("addShortcut").addEventListener("click", () => {
 
 loadShortcuts();
 
+
+const searchEngines = {
+    google: "https://www.google.com/search?q=",
+    duckduckgo: "https://duckduckgo.com/?q=",
+    bing: "https://www.bing.com/search?q=",
+    yahoo: "https://search.yahoo.com/search?p=",
+    brave: "https://search.brave.com/search?q="
+};
+
+let currentSearchEngine = "google";
+
+
+const selectSelected = document.querySelector(".select-selected");
+const selectItems = document.querySelector(".select-items");
+
+selectSelected.addEventListener("click", (e) => {
+    e.stopPropagation();
+    selectItems.classList.toggle("select-hide");
+    selectSelected.classList.toggle("select-arrow-active");
+});
+
+
+document.querySelectorAll(".select-items div").forEach(item => {
+    item.addEventListener("click", function() {
+        selectSelected.textContent = this.textContent;
+        currentSearchEngine = this.getAttribute("data-value");
+        selectItems.classList.add("select-hide");
+        selectSelected.classList.remove("select-arrow-active");
+        localStorage.setItem("searchEngine", currentSearchEngine);
+    });
+});
+
+
+document.addEventListener("click", () => {
+    selectItems.classList.add("select-hide");
+    selectSelected.classList.remove("select-arrow-active");
+});
+
+function performSearch() {
+    const query = document.getElementById("searchInput").value.trim();
+    
+    if (query) {
+        const searchURL = searchEngines[currentSearchEngine] + encodeURIComponent(query);
+        window.open(searchURL, '_blank');
+        document.getElementById("searchInput").value = "";
+    }
+}
+
+document.getElementById("searchButton").addEventListener("click", performSearch);
+
+document.getElementById("searchInput").addEventListener("keypress", e => {
+    if (e.key === "Enter") {
+        performSearch();
+    }
+});
+
+function loadSearchEngine() {
+    const savedEngine = localStorage.getItem("searchEngine");
+    if (savedEngine) {
+        currentSearchEngine = savedEngine;
+        const engineNames = {
+            google: "Google",
+            duckduckgo: "DuckDuckGo",
+            bing: "Bing",
+            yahoo: "Yahoo",
+            brave: "Brave"
+        };
+        selectSelected.textContent = engineNames[savedEngine];
+    }
+}
+
+loadSearchEngine();
+
+document.addEventListener("keydown", e => {
+    if (e.key === "/" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
+        e.preventDefault();
+        document.getElementById("searchInput").focus();
+    }
+    
+    if (e.key === "Escape" && document.activeElement === document.getElementById("searchInput")) {
+        document.getElementById("searchInput").blur();
+    }
+});
+
 // toggling stuff
 function loadToggles() {
     const clockToggle = localStorage.getItem("showClock") !== "false";
@@ -789,6 +872,7 @@ function loadToggles() {
     const weatherToggle = localStorage.getItem("showWeather") !== "false";
     const shortcutsToggle = localStorage.getItem("showShortcuts") !== "false";
     const shortcutNamesToggle = localStorage.getItem("showShortcutNames") !== "false";
+    const searchToggle = localStorage.getItem("showSearch") !== "false";
 
     document.getElementById("toggleClock").checked = clockToggle;
     document.getElementById("toggleToDo").checked = todoToggle;
@@ -797,11 +881,13 @@ function loadToggles() {
     document.getElementById("toggleWeather").checked = weatherToggle;
     document.getElementById("toggleShortcuts").checked = shortcutsToggle;
     document.getElementById("toggleShortcutNames").checked = shortcutNamesToggle;
+    document.getElementById("toggleSearch").checked = searchToggle;
 
     document.getElementById("clockWidget").style.display = clockToggle ? "block" : "none";
     document.getElementById("toDoListWidget").style.display = todoToggle ? "block" : "none";
     document.getElementById("weatherWidget").style.display = weatherToggle ? "block" : "none";
     document.getElementById("shortcutsWidget").style.display = shortcutsToggle ? "block" : "none";
+    document.getElementById("searchWidget").style.display = searchToggle ? "block" : "none";
 
     if (!shortcutNamesToggle) {
     document.body.classList.add("hide-shortcut-names");
@@ -853,6 +939,12 @@ document.getElementById("toggleShortcutNames").addEventListener("change", e => {
     } else {
         document.body.classList.add("hide-shortcut-names");
     }
+});
+
+document.getElementById("toggleSearch").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showSearch", show);
+    document.getElementById("searchWidget").style.display = show ? "block" : "none";
 });
 
 loadToggles();
