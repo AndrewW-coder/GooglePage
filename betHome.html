@@ -95,6 +95,42 @@
             <div class="wide-adjust"></div>
         </div>
 
+        <div class="widget" id="progressWidget">
+            <div id="progress">
+                <div class="progress-row">
+                    <span class="progress-label">Year</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressYear"></div>
+                    </div>
+                    <span class="progress-percent" id="progressYearPct"></span>
+                </div>
+                <div class="progress-row">
+                    <span class="progress-label">Month</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressMonth"></div>
+                    </div>
+                    <span class="progress-percent" id="progressMonthPct"></span>
+                </div>
+                <div class="progress-row">
+                    <span class="progress-label">Week</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressWeek"></div>
+                    </div>
+                    <span class="progress-percent" id="progressWeekPct"></span>
+                </div>
+                <div class="progress-row">
+                    <span class="progress-label">Day</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressDay"></div>
+                    </div>
+                    <span class="progress-percent" id="progressDayPct"></span>
+                </div>
+            </div>
+            <div class="resize-handle"></div>
+            <div class="wide-adjust"></div>
+        </div>
+
+
         <button id = "editToggle"> &#9874; </button>
         <button id = "settings"> &#9881; </button>
 
@@ -239,6 +275,17 @@
                         <label class="toggle-label">
                             <span>Show Calendar</span>
                             <input type="checkbox" id="toggleCalendar" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggleSection">
+                    <div class="toggleSectionHeader">Progress</div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Show Progress</span>
+                            <input type="checkbox" id="toggleProgress" class="toggle-checkbox" checked>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>

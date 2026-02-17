@@ -601,7 +601,7 @@ async function getWeather(cityName) {
         document.getElementById("weatherTemp").textContent = Math.round(data.current.temperature_2m) + "\u00B0F";
         document.getElementById("weatherDesc").textContent = description;
     } catch (error) {
-        console.error("Weather fetch error:", error);
+        // console.error("Weather fetch error:", error);
         document.getElementById("weatherTemp").textContent = "Error loading";
     }
 }
@@ -983,6 +983,52 @@ document.getElementById("calEventModal").addEventListener("click", (e) => {
 loadCalendarEvents();
 renderCalendar();
 
+
+function updateProgress() {
+    const now = new Date();
+
+
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const endOfYear = new Date(now.getFullYear() + 1, 0, 1);
+    const yearPct = ((now - startOfYear) / (endOfYear - startOfYear) * 100).toFixed(1);
+
+
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const monthPct = ((now - startOfMonth) / (endOfMonth - startOfMonth) * 100).toFixed(1);
+
+
+    const dayOfWeek = (now.getDay() + 6) % 7; 
+    const startOfWeek = new Date(now);
+    startOfWeek.setHours(0, 0, 0, 0);
+    startOfWeek.setDate(now.getDate() - dayOfWeek);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 7);
+    const weekPct = ((now - startOfWeek) / (endOfWeek - startOfWeek) * 100).toFixed(1);
+
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(now);
+    endOfDay.setHours(24, 0, 0, 0);
+    const dayPct = ((now - startOfDay) / (endOfDay - startOfDay) * 100).toFixed(1);
+
+
+    const bars = {
+        Year: yearPct,
+        Month: monthPct,
+        Week: weekPct,
+        Day: dayPct
+    };
+
+    Object.entries(bars).forEach(([name, pct]) => {
+        document.getElementById(`progress${name}`).style.width = pct + "%";
+        document.getElementById(`progress${name}Pct`).textContent = pct + "%";
+    });
+}
+
+updateProgress();
+setInterval(updateProgress, 1000);
+
 // toggling stuff
 function loadToggles() {
     const clockToggle = localStorage.getItem("showClock") !== "false";
@@ -994,6 +1040,7 @@ function loadToggles() {
     const shortcutNamesToggle = localStorage.getItem("showShortcutNames") !== "false";
     const searchToggle = localStorage.getItem("showSearch") !== "false";
     const calendarToggle = localStorage.getItem("showCalendar") !== "false";
+    const progressToggle = localStorage.getItem("showProgress") !== "false";
 
     document.getElementById("toggleClock").checked = clockToggle;
     document.getElementById("toggleToDo").checked = todoToggle;
@@ -1004,6 +1051,7 @@ function loadToggles() {
     document.getElementById("toggleShortcutNames").checked = shortcutNamesToggle;
     document.getElementById("toggleSearch").checked = searchToggle;
     document.getElementById("toggleCalendar").checked = calendarToggle;
+    document.getElementById("toggleProgress").checked = progressToggle;
 
     document.getElementById("clockWidget").style.display = clockToggle ? "block" : "none";
     document.getElementById("toDoListWidget").style.display = todoToggle ? "block" : "none";
@@ -1011,6 +1059,7 @@ function loadToggles() {
     document.getElementById("shortcutsWidget").style.display = shortcutsToggle ? "block" : "none";
     document.getElementById("searchWidget").style.display = searchToggle ? "block" : "none";
     document.getElementById("calendarWidget").style.display = calendarToggle ? "block" : "none";
+    document.getElementById("progressWidget").style.display = progressToggle ? "block" : "none";
 
     if (!shortcutNamesToggle) {
     document.body.classList.add("hide-shortcut-names");
@@ -1076,4 +1125,10 @@ document.getElementById("toggleCalendar").addEventListener("change", e => {
     const show = e.target.checked;
     localStorage.setItem("showCalendar", show);
     document.getElementById("calendarWidget").style.display = show ? "block" : "none";
+});
+
+document.getElementById("toggleProgress").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showProgress", show);
+    document.getElementById("progressWidget").style.display = show ? "block" : "none";
 });
