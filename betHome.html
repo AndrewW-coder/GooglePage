@@ -97,28 +97,28 @@
 
         <div class="widget" id="progressWidget">
             <div id="progress">
-                <div class="progress-row">
+                <div class="progress-row" id="progressYearRow">
                     <span class="progress-label">Year</span>
                     <div class="progress-bar-container">
                         <div class="progress-bar-fill" id="progressYear"></div>
                     </div>
                     <span class="progress-percent" id="progressYearPct"></span>
                 </div>
-                <div class="progress-row">
+                <div class="progress-row" id="progressMonthRow">
                     <span class="progress-label">Month</span>
                     <div class="progress-bar-container">
                         <div class="progress-bar-fill" id="progressMonth"></div>
                     </div>
                     <span class="progress-percent" id="progressMonthPct"></span>
                 </div>
-                <div class="progress-row">
+                <div class="progress-row" id="progressWeekRow">
                     <span class="progress-label">Week</span>
                     <div class="progress-bar-container">
                         <div class="progress-bar-fill" id="progressWeek"></div>
                     </div>
                     <span class="progress-percent" id="progressWeekPct"></span>
                 </div>
-                <div class="progress-row">
+                <div class="progress-row" id="progressDayRow">
                     <span class="progress-label">Day</span>
                     <div class="progress-bar-container">
                         <div class="progress-bar-fill" id="progressDay"></div>
@@ -286,6 +286,34 @@
                         <label class="toggle-label">
                             <span>Show Progress</span>
                             <input type="checkbox" id="toggleProgress" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Year</span>
+                            <input type="checkbox" id="toggleProgressYear" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Month</span>
+                            <input type="checkbox" id="toggleProgressMonth" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Week</span>
+                            <input type="checkbox" id="toggleProgressWeek" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Day</span>
+                            <input type="checkbox" id="toggleProgressDay" class="toggle-checkbox" checked>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>

@@ -1041,6 +1041,10 @@ function loadToggles() {
     const searchToggle = localStorage.getItem("showSearch") !== "false";
     const calendarToggle = localStorage.getItem("showCalendar") !== "false";
     const progressToggle = localStorage.getItem("showProgress") !== "false";
+    const progressYearToggle = localStorage.getItem("showProgressYear") !== "false";
+    const progressMonthToggle = localStorage.getItem("showProgressMonth") !== "false";
+    const progressWeekToggle = localStorage.getItem("showProgressWeek") !== "false";
+    const progressDayToggle = localStorage.getItem("showProgressDay") !== "false";
 
     document.getElementById("toggleClock").checked = clockToggle;
     document.getElementById("toggleToDo").checked = todoToggle;
@@ -1052,6 +1056,10 @@ function loadToggles() {
     document.getElementById("toggleSearch").checked = searchToggle;
     document.getElementById("toggleCalendar").checked = calendarToggle;
     document.getElementById("toggleProgress").checked = progressToggle;
+    document.getElementById("toggleProgressYear").checked = progressYearToggle;
+    document.getElementById("toggleProgressMonth").checked = progressMonthToggle;
+    document.getElementById("toggleProgressWeek").checked = progressWeekToggle;
+    document.getElementById("toggleProgressDay").checked = progressDayToggle;
 
     document.getElementById("clockWidget").style.display = clockToggle ? "block" : "none";
     document.getElementById("toDoListWidget").style.display = todoToggle ? "block" : "none";
@@ -1060,6 +1068,10 @@ function loadToggles() {
     document.getElementById("searchWidget").style.display = searchToggle ? "block" : "none";
     document.getElementById("calendarWidget").style.display = calendarToggle ? "block" : "none";
     document.getElementById("progressWidget").style.display = progressToggle ? "block" : "none";
+    document.getElementById("progressYearRow").style.display = progressYearToggle ? "flex" : "none";
+    document.getElementById("progressMonthRow").style.display = progressMonthToggle ? "flex" : "none";
+    document.getElementById("progressWeekRow").style.display = progressWeekToggle ? "flex" : "none";
+    document.getElementById("progressDayRow").style.display = progressDayToggle ? "flex" : "none";
 
     if (!shortcutNamesToggle) {
     document.body.classList.add("hide-shortcut-names");
@@ -1131,4 +1143,28 @@ document.getElementById("toggleProgress").addEventListener("change", e => {
     const show = e.target.checked;
     localStorage.setItem("showProgress", show);
     document.getElementById("progressWidget").style.display = show ? "block" : "none";
+});
+
+document.getElementById("toggleProgressYear").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showProgressYear", show);
+    document.getElementById("progressYearRow").style.display = show ? "flex" : "none";
+});
+
+document.getElementById("toggleProgressMonth").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showProgressMonth", show);
+    document.getElementById("progressMonthRow").style.display = show ? "flex" : "none";
+});
+
+document.getElementById("toggleProgressWeek").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showProgressWeek", show);
+    document.getElementById("progressWeekRow").style.display = show ? "flex" : "none";
+});
+
+document.getElementById("toggleProgressDay").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showProgressDay", show);
+    document.getElementById("progressDayRow").style.display = show ? "flex" : "none";
 });
