@@ -3,6 +3,7 @@ const videoCache = new Map();
 const blobURLs = new Map();
 const openReq = indexedDB.open("VideoDB", 2);
 
+
 // monochrome SVG icons
 const iconLibrary = {
     youtube: '<svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
@@ -224,14 +225,31 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
         activeDrag = false;
     });
 
-    // resizing each widget
     let resizing = false;
-    let resizingStartRatio = 0;
+    let resizingStartData = {};
+
     handle.addEventListener("mousedown", e => {
         if (!editMode || wide_adj) return;
         resizing = true;
         const rect = widget.getBoundingClientRect();
-        resizingStartRatio = rect.height/rect.width;
+        
+        resizingStartData = {
+            aspectRatio: rect.height / rect.width,
+            fontRatios: []
+        };
+        
+        widget.querySelectorAll("*").forEach(child => {
+            if (child.classList.contains("resize-handle") || child.classList.contains("wide-adjust")) return;
+            
+            const currentFontSize = parseFloat(window.getComputedStyle(child).fontSize);
+            if (currentFontSize > 0) {
+                resizingStartData.fontRatios.push({
+                    element: child,
+                    ratio: currentFontSize / rect.height
+                });
+            }
+        });
+        
         e.preventDefault();
     });
 
@@ -240,37 +258,18 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
 
         const rect = widget.getBoundingClientRect();
         let newWidth = e.clientX - rect.left;
-        let newHeight = newWidth * resizingStartRatio;
+        let newHeight = newWidth * resizingStartData.aspectRatio;
 
-        newWidth = Math.max(50 / resizingStartRatio, Math.min(newWidth, 2000));
-        newHeight = newWidth * resizingStartRatio;
+        newWidth = Math.max(50 / resizingStartData.aspectRatio, Math.min(newWidth, 2000));
+        newHeight = newWidth * resizingStartData.aspectRatio;
 
         widget.style.width = newWidth + "px";
         widget.style.height = newHeight + "px";
         
-        let fontSize = 30;
-        if(widget.id == "clockWidget") fontSize = newHeight / 1.25;
-        else if (widget.id === "weatherWidget") {
-            const baseFontSize = fontSize;
-            widget.querySelector("#weatherTemp").style.fontSize = (baseFontSize * 1.33) + "px";
-            widget.querySelector("#weatherDesc").style.fontSize = (baseFontSize * 0.53) + "px";
-            widget.querySelector("#weatherLocation").style.fontSize = (baseFontSize * 0.6) + "px";
-        }
-
-
-         else if(widget.id != "shortcutsWidget") {
-
-            widget.querySelectorAll("div").forEach(child => {
-                if (!child.classList.contains("resize-handle") && !child.classList.contains("wide-adjust")) {
-                    child.style.fontSize = fontSize + "px";
-                }
-            });
-
-        }
-
-        
+        resizingStartData.fontRatios.forEach(({ element, ratio }) => {
+            element.style.fontSize = (newHeight * ratio) + "px";
+        });
     });
-
 
     let wide_adj = false;
 
@@ -296,66 +295,49 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
 
 });
 
-// saving and loading widgets
-
 function saveWidget(widget) {
-    const id = widget.id;
-    let fontSize = "40px"; 
+    const fontSizes = {};
     
-    if (widget.id === "clockWidget") {
-        const digit = widget.querySelector(".digit");
-        if (digit) {
-            fontSize = window.getComputedStyle(digit).fontSize;
+    widget.querySelectorAll("*").forEach((child, index) => {
+        if (child.classList.contains("resize-handle") || child.classList.contains("wide-adjust")) return;
+        
+        const fontSize = window.getComputedStyle(child).fontSize;
+        if (fontSize && parseFloat(fontSize) > 0) {
+            const elementId = child.id || Array.from(child.classList).join('-') || `elem-${index}`;
+            fontSizes[elementId] = fontSize;
         }
-    } else if (widget.id === "weatherWidget") {
-        const weatherDiv = widget.querySelector("#weather");
-        if (weatherDiv) {
-            fontSize = window.getComputedStyle(weatherDiv).fontSize;
-        }
-    } else {
-        const contentDiv = widget.querySelector("div:not(.resize-handle):not(.wide-adjust)");
-        if (contentDiv) {
-            fontSize = window.getComputedStyle(contentDiv).fontSize;
-        }
-    }
+    });
 
-    localStorage.setItem(id, JSON.stringify({
+    localStorage.setItem(widget.id, JSON.stringify({
         left: widget.style.left,
         top: widget.style.top,
         width: widget.style.width,
         height: widget.style.height,
-        fontSize: fontSize
+        fontSizes: fontSizes
     }));
 }
 
 function loadWidgets() {
     document.querySelectorAll(".widget").forEach(widget => {
         const saved = localStorage.getItem(widget.id);
-        
         if (!saved) return;
+        
         const data = JSON.parse(saved);
-
         widget.style.left = data.left;
         widget.style.top = data.top;
         widget.style.width = data.width;
         widget.style.height = data.height;
 
-        if(widget.id == "searchWidget" || widget.id == "weatherWidget" || widget.id == "todoListWidget" || widget.id == "shortcutsWidget") return;
-
-        // currently only clock effected
-        widget.querySelectorAll("div").forEach(child => {
-            if (!child.classList.contains("resize-handle") && !child.classList.contains("wide-adjust")) {
-                child.style.fontSize = data.fontSize;
-            }
-        });
-    
-
-        // if (widget.id === "weatherWidget") {
-        //     const baseFontSize = parseFloat(data.fontSize);
-        //     widget.querySelector("#weatherTemp").style.fontSize = (baseFontSize * 1.33) + "px";
-        //     widget.querySelector("#weatherDesc").style.fontSize = (baseFontSize * 0.53) + "px";
-        //     widget.querySelector("#weatherLocation").style.fontSize = (baseFontSize * 0.6) + "px";
-        // }
+        if (data.fontSizes) {
+            widget.querySelectorAll("*").forEach((child, index) => {
+                if (child.classList.contains("resize-handle") || child.classList.contains("wide-adjust")) return;
+                
+                const elementId = child.id || Array.from(child.classList).join('-') || `elem-${index}`;
+                if (data.fontSizes[elementId]) {
+                    child.style.fontSize = data.fontSizes[elementId];
+                }
+            });
+        }
     });
 }
 
@@ -377,10 +359,6 @@ closeSettings.addEventListener("click", () => {
 
 window.addEventListener("click", e => {
     if (e.target === modal) modal.style.display = "none";
-    // if (e.target === bg) {
-    //     editMode = false;
-    //     document.body.classList.toggle("edit-mode");
-    // }
 });
 
 
@@ -674,12 +652,15 @@ function saveShortcuts() {
 function displayShortcuts() {
     const grid = document.getElementById("shortcutsGrid");
     grid.innerHTML = "";
+
+    const savedColor = localStorage.getItem("fontColor");
     
     shortcuts.forEach((shortcut, index) => {
         const item = document.createElement("a");
         item.className = "shortcut-item";
         item.href = shortcut.url;
         item.target = "_blank";
+        if (savedColor) item.style.color = savedColor;
         
         const icon = document.createElement("div");
         icon.className = "shortcut-icon";
@@ -779,53 +760,16 @@ document.getElementById("addShortcut").addEventListener("click", () => {
 
 loadShortcuts();
 
-
-const searchEngines = {
-    google: "https://www.google.com/search?q=",
-    duckduckgo: "https://duckduckgo.com/?q=",
-    bing: "https://www.bing.com/search?q=",
-    yahoo: "https://search.yahoo.com/search?p=",
-    brave: "https://search.brave.com/search?q="
-};
-
-let currentSearchEngine = "google";
-
-
-const selectSelected = document.querySelector(".select-selected");
-const selectItems = document.querySelector(".select-items");
-
-selectSelected.addEventListener("click", (e) => {
-    e.stopPropagation();
-    selectItems.classList.toggle("select-hide");
-    selectSelected.classList.toggle("select-arrow-active");
-});
-
-
-document.querySelectorAll(".select-items div").forEach(item => {
-    item.addEventListener("click", function() {
-        selectSelected.textContent = this.textContent;
-        currentSearchEngine = this.getAttribute("data-value");
-        selectItems.classList.add("select-hide");
-        selectSelected.classList.remove("select-arrow-active");
-        localStorage.setItem("searchEngine", currentSearchEngine);
-    });
-});
-
-
-document.addEventListener("click", () => {
-    selectItems.classList.add("select-hide");
-    selectSelected.classList.remove("select-arrow-active");
-});
-
 function performSearch() {
     const query = document.getElementById("searchInput").value.trim();
     
     if (query) {
-        const searchURL = searchEngines[currentSearchEngine] + encodeURIComponent(query);
+        const searchURL = "https://www.google.com/search?q=" + encodeURIComponent(query);
         window.open(searchURL, '_blank');
         document.getElementById("searchInput").value = "";
     }
 }
+
 
 document.getElementById("searchButton").addEventListener("click", performSearch);
 
@@ -834,23 +778,6 @@ document.getElementById("searchInput").addEventListener("keypress", e => {
         performSearch();
     }
 });
-
-function loadSearchEngine() {
-    const savedEngine = localStorage.getItem("searchEngine");
-    if (savedEngine) {
-        currentSearchEngine = savedEngine;
-        const engineNames = {
-            google: "Google",
-            duckduckgo: "DuckDuckGo",
-            bing: "Bing",
-            yahoo: "Yahoo",
-            brave: "Brave"
-        };
-        selectSelected.textContent = engineNames[savedEngine];
-    }
-}
-
-loadSearchEngine();
 
 document.addEventListener("keydown", e => {
     if (e.key === "/" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
@@ -863,6 +790,199 @@ document.addEventListener("keydown", e => {
     }
 });
 
+function applyFontColor(color) {
+    document.querySelectorAll(".widget").forEach(widget => {
+        widget.style.setProperty('color', color, 'important');
+    });
+    
+    
+    document.getElementById("editToggle").style.color = color;
+    document.getElementById("settings").style.color = color;
+
+
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+
+    document.querySelectorAll('.input-wrapper').forEach(wrapper => {
+        wrapper.style.borderBottomColor = `rgba(${r}, ${g}, ${b}, 0.2)`;
+    });
+    document.documentElement.style.setProperty('--input-underline-color', color);
+    
+    // filling svg icons
+    document.querySelectorAll('.shortcut-icon svg').forEach(svg => {
+        svg.style.fill = color;
+        svg.querySelectorAll('path').forEach(path => {
+            path.style.fill = color;
+        });
+    });
+}
+
+function loadFontColor() {
+    const savedColor = localStorage.getItem("fontColor");
+    if (savedColor) {
+        document.getElementById("fontColorPicker").value = savedColor;
+        applyFontColor(savedColor);
+    }
+}
+
+document.getElementById("fontColorPicker").addEventListener("input", (e) => {
+    const color = e.target.value;
+    localStorage.setItem("fontColor", color);
+    applyFontColor(color);
+});
+
+
+loadFontColor();
+
+// calendar widget
+let calendarEvents = {};
+let calCurrentDate = new Date();
+let calSelectedDate = null;
+
+function loadCalendarEvents() {
+    const saved = localStorage.getItem("calendarEvents");
+    if (saved) calendarEvents = JSON.parse(saved);
+}
+
+function saveCalendarEvents() {
+    localStorage.setItem("calendarEvents", JSON.stringify(calendarEvents));
+}
+
+function renderCalendar() {
+    const year = calCurrentDate.getFullYear();
+    const month = calCurrentDate.getMonth();
+
+    document.getElementById("calMonthYear").textContent = 
+        calCurrentDate.toLocaleString("default", { month: "long", year: "numeric" });
+
+    const grid = document.getElementById("calendarGrid");
+    grid.querySelectorAll(".cal-day").forEach(d => d.remove());
+
+    const today = new Date();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        empty.className = "cal-day empty";
+        grid.appendChild(empty);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement("div");
+        cell.className = "cal-day";
+        cell.textContent = day;
+
+        const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+            cell.classList.add("today");
+        }
+
+        if (calendarEvents[dateKey] && calendarEvents[dateKey].length > 0) {
+            cell.classList.add("has-events");
+        }
+
+        cell.addEventListener("click", () => openEventModal(dateKey, day, month, year));
+        grid.appendChild(cell);
+    }
+}
+
+function openEventModal(dateKey, day, month, year) {
+    calSelectedDate = dateKey;
+
+    const months = ["January","February","March","April","May","June",
+                    "July","August","September","October","November","December"];
+    document.getElementById("calEventDate").textContent = `${months[month]} ${day}, ${year}`;
+    
+    renderEventList();
+    document.getElementById("calEventModal").classList.add("open");
+    document.getElementById("calEventInput").focus();
+}
+
+function renderEventList() {
+    const list = document.getElementById("calEventList");
+    list.innerHTML = "";
+
+    const events = calendarEvents[calSelectedDate] || [];
+
+    if (events.length === 0) {
+        list.innerHTML = `<div style="opacity: 0.5; font-size: 13px;">No events</div>`;
+        return;
+    }
+
+    events.forEach((event, index) => {
+        const item = document.createElement("div");
+        item.className = "cal-event-item";
+
+        const text = document.createElement("span");
+        text.textContent = event;
+
+        const del = document.createElement("button");
+        del.className = "cal-event-delete";
+        del.innerHTML = "&times;";
+        del.onclick = () => {
+            calendarEvents[calSelectedDate].splice(index, 1);
+            if (calendarEvents[calSelectedDate].length === 0) {
+                delete calendarEvents[calSelectedDate];
+            }
+            saveCalendarEvents();
+            renderEventList();
+            renderCalendar();
+        };
+
+        item.appendChild(text);
+        item.appendChild(del);
+        list.appendChild(item);
+    });
+}
+
+function addCalendarEvent() {
+    const input = document.getElementById("calEventInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    if (!calendarEvents[calSelectedDate]) calendarEvents[calSelectedDate] = [];
+    calendarEvents[calSelectedDate].push(text);
+    
+    saveCalendarEvents();
+    renderEventList();
+    renderCalendar();
+    input.value = "";
+}
+
+document.getElementById("calPrev").addEventListener("click", (e) => {
+    e.stopPropagation();
+    calCurrentDate.setMonth(calCurrentDate.getMonth() - 1);
+    renderCalendar();
+});
+
+document.getElementById("calNext").addEventListener("click", (e) => {
+    e.stopPropagation();
+    calCurrentDate.setMonth(calCurrentDate.getMonth() + 1);
+    renderCalendar();
+});
+
+document.getElementById("calEventAdd").addEventListener("click", addCalendarEvent);
+
+document.getElementById("calEventInput").addEventListener("keypress", e => {
+    if (e.key === "Enter") addCalendarEvent();
+});
+
+document.getElementById("calEventClose").addEventListener("click", () => {
+    document.getElementById("calEventModal").classList.remove("open");
+});
+
+document.getElementById("calEventModal").addEventListener("click", (e) => {
+    if (e.target === document.getElementById("calEventModal")) {
+        document.getElementById("calEventModal").classList.remove("open");
+    }
+});
+
+loadCalendarEvents();
+renderCalendar();
+
 // toggling stuff
 function loadToggles() {
     const clockToggle = localStorage.getItem("showClock") !== "false";
@@ -873,6 +993,7 @@ function loadToggles() {
     const shortcutsToggle = localStorage.getItem("showShortcuts") !== "false";
     const shortcutNamesToggle = localStorage.getItem("showShortcutNames") !== "false";
     const searchToggle = localStorage.getItem("showSearch") !== "false";
+    const calendarToggle = localStorage.getItem("showCalendar") !== "false";
 
     document.getElementById("toggleClock").checked = clockToggle;
     document.getElementById("toggleToDo").checked = todoToggle;
@@ -882,12 +1003,14 @@ function loadToggles() {
     document.getElementById("toggleShortcuts").checked = shortcutsToggle;
     document.getElementById("toggleShortcutNames").checked = shortcutNamesToggle;
     document.getElementById("toggleSearch").checked = searchToggle;
+    document.getElementById("toggleCalendar").checked = calendarToggle;
 
     document.getElementById("clockWidget").style.display = clockToggle ? "block" : "none";
     document.getElementById("toDoListWidget").style.display = todoToggle ? "block" : "none";
     document.getElementById("weatherWidget").style.display = weatherToggle ? "block" : "none";
     document.getElementById("shortcutsWidget").style.display = shortcutsToggle ? "block" : "none";
     document.getElementById("searchWidget").style.display = searchToggle ? "block" : "none";
+    document.getElementById("calendarWidget").style.display = calendarToggle ? "block" : "none";
 
     if (!shortcutNamesToggle) {
     document.body.classList.add("hide-shortcut-names");
@@ -949,3 +1072,8 @@ document.getElementById("toggleSearch").addEventListener("change", e => {
 
 loadToggles();
 
+document.getElementById("toggleCalendar").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showCalendar", show);
+    document.getElementById("calendarWidget").style.display = show ? "block" : "none";
+});

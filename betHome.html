@@ -7,13 +7,46 @@
     </head>
 
     <body>
-        <video id = "bgVideo" autoplay muted loop preload="auto"></video>
+        <video id="bgVideo" autoplay muted loop preload="auto" playsinline disablepictureinpicture></video>
         <img id="bgImage" alt="Background"> 
 
         <div class = "widget" id = "clockWidget">
             <div id = "clock"></div>
             <div class = "resize-handle"></div>
             <div class = "wide-adjust"></div>
+        </div>
+
+        <div class="widget" id="calendarWidget">
+            <div id="calendar">
+                <div id="calendarHeader">
+                    <button id="calPrev">&#8249;</button>
+                    <span id="calMonthYear"></span>
+                    <button id="calNext">&#8250;</button>
+                </div>
+                <div id="calendarGrid">
+                    <div class="cal-day-label">Su</div>
+                    <div class="cal-day-label">Mo</div>
+                    <div class="cal-day-label">Tu</div>
+                    <div class="cal-day-label">We</div>
+                    <div class="cal-day-label">Th</div>
+                    <div class="cal-day-label">Fr</div>
+                    <div class="cal-day-label">Sa</div>
+                </div>
+            </div>
+            <div id="calEventModal">
+                <div id="calEventModalContent">
+                    <div id="calEventDate"></div>
+                    <div id="calEventList"></div>
+                    <div id="calEventInputRow">
+                        <input type="text" id="calEventInput" placeholder="Add event...">
+                        <button id="calEventAdd">+</button>
+                    </div>
+                    <button id="calEventClose">&times;</button>
+                </div>
+            </div>
+
+            <div class="resize-handle"></div>
+            <div class="wide-adjust"></div>
         </div>
 
         <div class = "widget" id = "toDoListWidget">
@@ -52,20 +85,10 @@
         <div class="widget" id="searchWidget">
             <div id="search">
                 <div id="searchContainer">
-                    <div class="custom-select">
-                        <div class="select-selected">Google</div>
-                        <div class="select-items select-hide">
-                            <div data-value="google">Google</div>
-                            <div data-value="duckduckgo">DuckDuckGo</div>
-                            <div data-value="bing">Bing</div>
-                            <div data-value="yahoo">Yahoo</div>
-                            <div data-value="brave">Brave</div>
-                        </div>
-                    </div>
                     <div class="input-wrapper">
-                        <input type="text" id="searchInput" placeholder="Search the web...">
+                        <input type="text" id="searchInput" placeholder="Search the web (/) . . .">
                     </div>
-                    <button id="searchButton"> &#9656; </button>
+                    <button id="searchButton"> &#8617; </button>
                 </div>
             </div>
             <div class="resize-handle"></div>
@@ -78,6 +101,12 @@
         <div id = "settingsModal" class = "modal">
             <div class = "modal-content">
                 <button id = "closeSettings"> &times; </button>
+
+                <div class="settingsHeader">Appearance</div>
+                <div class="modalItem">
+                    <label for="fontColorPicker" style="margin-bottom: 5px; display: block;">Widget Font Color</label>
+                    <input type="color" id="fontColorPicker" value="#ffffff">
+                </div>
 
                 <div class = "settingsHeader"> Background </div>
             
@@ -124,72 +153,98 @@
 
             <div id="shortcutsList"></div>
 
-            <div class = "settingsHeader"> Toggles </div>
+            <div class="settingsHeader">Toggles</div>
 
-            <div class="toggle-container">
-                <label class="toggle-label">
-                    <span>Show Clock</span>
-                    <input type="checkbox" id="toggleClock" class="toggle-checkbox" checked>
-                    <span class="toggle-slider"></span>
-                </label>
+            <div class="toggleGrid">
+
+                <div class="toggleSection">
+                    <div class="toggleSectionHeader">Clock</div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Show Clock</span>
+                            <input type="checkbox" id="toggleClock" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Seconds</span>
+                            <input type="checkbox" id="toggleSeconds" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Colons</span>
+                            <input type="checkbox" id="toggleColons" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggleSection">
+                    <div class="toggleSectionHeader">To-Do</div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Show To-Do</span>
+                            <input type="checkbox" id="toggleToDo" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggleSection">
+                    <div class="toggleSectionHeader">Weather</div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Show Weather</span>
+                            <input type="checkbox" id="toggleWeather" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggleSection">
+                    <div class="toggleSectionHeader">Shortcuts</div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Show Shortcuts</span>
+                            <input type="checkbox" id="toggleShortcuts" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Names</span>
+                            <input type="checkbox" id="toggleShortcutNames" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggleSection">
+                    <div class="toggleSectionHeader">Search</div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Show Search</span>
+                            <input type="checkbox" id="toggleSearch" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggleSection">
+                    <div class="toggleSectionHeader">Calendar</div>
+                    <div class="toggle-container">
+                        <label class="toggle-label">
+                            <span>Show Calendar</span>
+                            <input type="checkbox" id="toggleCalendar" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
             </div>
-
-            <div class="toggle-container">
-                <label class="toggle-label">
-                    <span>Show Seconds</span>
-                    <input type="checkbox" id="toggleSeconds" class="toggle-checkbox" checked>
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-
-            <div class="toggle-container">
-                <label class="toggle-label">
-                    <span>Show Colons</span>
-                    <input type="checkbox" id="toggleColons" class="toggle-checkbox" checked>
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-
-            <div class="toggle-container">
-                <label class="toggle-label">
-                    <span>Show To-Do List</span>
-                    <input type="checkbox" id="toggleToDo" class="toggle-checkbox" checked>
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-
-            <div class="toggle-container">
-                <label class="toggle-label">
-                    <span>Show Weather</span>
-                    <input type="checkbox" id="toggleWeather" class="toggle-checkbox" checked>
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-
-            <div class="toggle-container">
-                <label class="toggle-label">
-                    <span>Show Shortcuts</span>
-                    <input type="checkbox" id="toggleShortcuts" class="toggle-checkbox" checked>
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-
-            <div class="toggle-container">
-                <label class="toggle-label">
-                    <span>Show Shortcut Names</span>
-                    <input type="checkbox" id="toggleShortcutNames" class="toggle-checkbox" checked>
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-
-            <div class="toggle-container">
-                <label class="toggle-label">
-                    <span>Show Search Bar</span>
-                    <input type="checkbox" id="toggleSearch" class="toggle-checkbox" checked>
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-
         </div>
     </div>
 

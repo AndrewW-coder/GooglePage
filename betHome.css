@@ -17,8 +17,6 @@ html, body {
 input {
     border: none;
     outline: none;
-    /* background: transparent; */
-    /* text-decoration: underline; */
 }
 
 button {
@@ -36,13 +34,15 @@ video, #bgImage {
     object-fit: cover;
     z-index: 0;
     pointer-events: none;
+    will-change: transform; /* Forces GPU acceleration */
+    transform: translateZ(0); /* Triggers hardware acceleration */
 }
 
 #bgImage {
     display: none;
 }
 
-/* widget stuff */
+
 .widget {
     position: absolute;
     top: 100px;
@@ -50,70 +50,7 @@ video, #bgImage {
     width: 200px;
     height: 100px;
     z-index: 5;
-}
-
-#clockWidget {
-    width: 300px;
-    height: 50px;
-}
-
-#clock {
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-    font-variant-numeric: tabular-nums;
     color: white;
-    font-family: "Aldrich", sans-serif;
-}
-
-#toDoListWidget {
-    width: 400px;
-    height: 300px;
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
-}
-
-#toDoHead {
-    font-family: "Aldrich", sans-serif;
-    color: white;
-    font-size: 40px;
-    flex-shrink: 0;
-}
-
-
-#toDoContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    z-index: 1001;
-}
-
-#toDoInputContainer {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 10px;
-    flex-shrink: 0;
-    z-index: 1001;
-}
-
-#toDoInput {
-    flex: 1;
-    padding: 8px;
-    background: transparent;
-    border-radius: 4px;
-    color: rgb(255, 255, 255);
-    font-family: "Aldrich", sans-serif;
-    font-size: 14px;
-    z-index: 1001;
-    position: relative;
-}
-
-#toDoInput::placeholder {
-    color: rgba(255, 255, 255, 0.5);
 }
 
 .input-wrapper {
@@ -130,9 +67,166 @@ video, #bgImage {
     left: 0;
     width: 0;
     height: 2px;
-    background: white;
+    background: var(--input-underline-color, white);
     transition: width 0.3s ease;
 }
+
+/* ---------------------- RESIZING HANDLES ----------------------- */
+.resize-handle {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    cursor: se-resize;
+    border-radius: 1px;
+    background-color: white;
+}
+
+.wide-adjust {
+    width: 5px;
+    height: 20px;      
+    position: absolute;
+    right: -3px;
+    bottom: calc(50% - 10px); 
+    cursor: ew-resize;
+    z-index: 1003;
+    background-color: rgb(255, 255, 255);
+    border-radius: 2px;
+}
+
+/* ---------------------- EDIT/SETTINGS BUTTONS ----------------------- */
+
+#editToggle, #settings {
+  position: fixed;
+  cursor: pointer;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 20px;
+  font-weight: 400;
+  font-family: "Aldrich", sans-serif;
+}
+
+#editToggle:hover, #settings:hover {
+    font-weight: 700;
+}
+
+
+.edit-mode .widget {
+  outline: 2px dashed white;
+  cursor: move;
+}
+
+#settings {
+    top: 50px;
+}
+
+body:is(.edit-mode) #editToggle {
+    font-weight: 700;
+}
+
+body:not(.edit-mode) .resize-handle,
+body:not(.edit-mode) .wide-adjust {
+    cursor: default;
+    display: none;
+}
+
+
+/* ---------------------- CLOCK WIDGET ----------------------- */
+
+#clockWidget {
+    width: 300px;
+    height: 50px;
+}
+
+#clock {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+    font-family: "Aldrich", sans-serif;
+}
+
+.digit {
+    display: inline-block;
+    width: 0.75em;
+    text-align: center;
+    /* font-weight: 1000; */
+}
+
+.colon {
+    display: inline-block;
+    width: 0.4em;
+    text-align: center;
+    /* font-weight: 1000; */
+}
+
+.ampm {
+    display: inline-block;
+    width: 1.5em;
+    text-align: center;
+    font-family: "Aldrich", sans-serif;
+    letter-spacing: -0.05em;
+}
+
+/* ---------------------- TODO WIDGET ----------------------- */
+
+#toDoListWidget {
+    width: 400px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+#toDoHead {
+    font-family: "Aldrich", sans-serif;
+    color: inherit;
+    font-size: 40px;
+    flex-shrink: 0;
+}
+
+
+#toDoContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1001;
+    color: inherit;
+}
+
+#toDoInputContainer {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+    z-index: 1001;
+}
+
+#toDoInput {
+    flex: 1;
+    padding: 8px;
+    background: transparent;
+    border-radius: 4px;
+    color: inherit;
+    font-family: "Aldrich", sans-serif;
+    font-size: 14px;
+    z-index: 1001;
+    position: relative;
+}
+
+#toDoInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
 
 #toDoInput:focus + .input-wrapper::after,
 .input-wrapper:focus-within::after {
@@ -145,7 +239,7 @@ video, #bgImage {
     width: 35px;
     height: 35px;
     border-radius: 4px;
-    color: white;
+    color: inherit;
     font-size: 20px;
     cursor: pointer;
     font-family: "Aldrich", sans-serif;
@@ -193,9 +287,9 @@ video, #bgImage {
     margin-bottom: 5px;
     background: transparent;
     border-radius: 4px;
-    color: white;
     font-family: "Aldrich", sans-serif;
     font-size: 20px;
+    color: inherit;
 }
 
 .todo-item:hover {
@@ -229,19 +323,20 @@ video, #bgImage {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: white;
+    color: inherit;
     font-size: 14px;
 }
 
 .todo-text {
     flex: 1;
     word-wrap: break-word;
+    color: inherit;
 }
 
 .todo-delete {
     background: transparent;
     border: none;
-    color: white;
+    color: inherit;
     cursor: pointer;
     font-size: 18px;
     padding: 0;
@@ -258,95 +353,8 @@ video, #bgImage {
     opacity: 1;
 }
 
-.digit {
-    display: inline-block;
-    width: 0.75em;
-    text-align: center;
-    /* font-weight: 1000; */
-}
 
-.colon {
-    display: inline-block;
-    width: 0.4em;
-    text-align: center;
-    /* font-weight: 1000; */
-}
-
-.ampm {
-    display: inline-block;
-    width: 1.5em;
-    text-align: center;
-    font-family: "Aldrich", sans-serif;
-    letter-spacing: -0.05em;
-}
-
-/* resizing */
-.resize-handle {
-    width: 10px;
-    height: 10px;
-    position: absolute;
-    right: -5px;
-    bottom: -5px;
-    cursor: se-resize;
-    border-radius: 1px;
-    background-color: white;
-}
-
-.wide-adjust {
-    width: 5px;
-    height: 20px;      
-    position: absolute;
-    right: -3px;
-    bottom: calc(50% - 10px); 
-    cursor: ew-resize;
-    z-index: 1003;
-    background-color: rgb(255, 255, 255);
-    border-radius: 2px;
-}
-
-/* hide cursors when editMode is off */
-body:not(.edit-mode) .resize-handle,
-body:not(.edit-mode) .wide-adjust {
-    cursor: default;
-    display: none;
-}
-
-.edit-mode .widget {
-  outline: 2px dashed white;
-  cursor: move;
-}
-
-
-
-/* edit button and settings */
-
-#editToggle, #settings {
-  position: fixed;
-  cursor: pointer;
-  top: 20px;
-  right: 20px;
-  z-index: 10;
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 20px;
-  font-weight: 400;
-  font-family: "Aldrich", sans-serif;
-}
-
-#editToggle:hover, #settings:hover {
-    font-weight: 700;
-}
-
-#settings {
-    top: 50px;
-}
-
-body:is(.edit-mode) #editToggle {
-    font-weight: 700;
-}
-
-/* modal items */
+/* ---------------------- SETTINGS MODAL ----------------------- */
 
 .modal {
     display: none;
@@ -435,7 +443,7 @@ body:is(.edit-mode) #editToggle {
     grid-template-columns: repeat(auto-fill, minmax(12vw, 1fr));
     gap: 15px;
 
-    min-height: 200px;
+    min-height: 300px;
     max-height: 50vh;
     overflow-y: auto;
 }
@@ -505,6 +513,36 @@ body:is(.edit-mode) #editToggle {
     font-weight: 700;
 }
 
+#cityInput {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    color: white;
+    font-family: "Aldrich", sans-serif;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+#cityInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#saveCity {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-family: "Aldrich", sans-serif;
+}
+
+#saveCity:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
 /* Toggle switches */
 .toggle-container {
     margin-bottom: 15px;
@@ -551,35 +589,7 @@ body:is(.edit-mode) #editToggle {
     transform: translateX(26px);
 }
 
-#cityInput {
-    flex: 1;
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    color: white;
-    font-family: "Aldrich", sans-serif;
-    font-size: 14px;
-    margin-right: 10px;
-}
-
-#cityInput::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-#saveCity {
-    padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.3);
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    font-family: "Aldrich", sans-serif;
-}
-
-#saveCity:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
+/* ---------------------- WEATHER WIDGET ----------------------- */
 
 #weatherWidget {
     width: 250px;
@@ -593,7 +603,6 @@ body:is(.edit-mode) #editToggle {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: white;
     font-family: "Aldrich", sans-serif;
     font-size: 20px;
 }
@@ -613,6 +622,8 @@ body:is(.edit-mode) #editToggle {
     font-size: 18px;
     opacity: 0.9;
 }
+
+/* ---------------------- SHORTCUTS WIDGET ----------------------- */
 
 
 #shortcutsWidget {
@@ -768,6 +779,8 @@ body.hide-shortcut-names .shortcut-name {
     height: 70%;
 }
 
+/* ---------------------- SEARCH WIDGET ----------------------- */
+
 #searchWidget {
     width: 500px;
     height: 60px;
@@ -789,67 +802,6 @@ body.hide-shortcut-names .shortcut-name {
     width: 100%;
 }
 
-.custom-select {
-    position: relative;
-    min-width: 120px;
-}
-
-.select-selected {
-    padding: 8px;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    color: white;
-    font-family: "Aldrich", sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    user-select: none;
-}
-
-.select-selected:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
-
-.select-selected::after {
-    content: '\25BC';
-    position: absolute;
-    right: 10px;
-    font-size: 10px;
-}
-
-.select-items {
-    position: absolute;
-    background: transparent;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 99;
-    margin-top: 2px;
-}
-
-.select-items div {
-    padding: 8px;
-    color: white;
-    font-family: "Aldrich", sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    user-select: none;
-}
-
-.select-items div:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.select-hide {
-    display: none;
-}
-
-.select-arrow-active::after {
-    content: '\25B2';
-}
 #searchContainer .input-wrapper {
     flex: 1;
 }
@@ -860,20 +812,20 @@ body.hide-shortcut-names .shortcut-name {
     background: transparent;
     border: none;
     border-radius: 4px;
-    color: rgb(255, 255, 255);
+    color: inherit;
     font-family: "Aldrich", sans-serif;
     font-size: 14px;
 }
 
 #searchInput::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 #searchButton {
     width: 35px;
     height: 35px;
     border-radius: 4px;
-    color: white;
+    color: inherit;
     font-size: 20px;
     cursor: pointer;
     font-family: "Aldrich", sans-serif;
@@ -885,4 +837,261 @@ body.hide-shortcut-names .shortcut-name {
 
 #searchButton:hover {
     font-weight: 700;
+}
+
+#fontColorPicker {
+    width: 100%;
+    height: 40px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+/* ---------------------- CALENDAR WIDGET ----------------------- */
+
+#calendarWidget {
+    width: 280px;
+    height: 260px;
+}
+
+#calendar {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: "Aldrich", sans-serif;
+    color: inherit;
+}
+
+#calendarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+#calPrev, #calNext {
+    color: inherit;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1;
+    padding: 0 4px;
+}
+
+#calPrev:hover, #calNext:hover {
+    font-weight: 700;
+}
+
+#calMonthYear {
+    font-size: 14px;
+    text-align: center;
+}
+
+#calendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    flex: 1;
+}
+
+.cal-day-label {
+    font-size: 10px;
+    text-align: center;
+    opacity: 0.6;
+    padding: 2px 0;
+}
+
+.cal-day {
+    font-size: 11px;
+    text-align: center;
+    padding: 3px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.cal-day:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.cal-day.today {
+    background: rgba(255, 255, 255, 0.3);
+    font-weight: 700;
+    border-radius: 5px;
+}
+
+.cal-day.has-events::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.cal-day.empty {
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Event modal */
+#calEventModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+#calEventModal.open {
+    display: flex;
+}
+
+#calEventModalContent {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+    min-width: 250px;
+    max-width: 350px;
+    font-family: "Aldrich", sans-serif;
+    color: white;
+    position: relative;
+}
+
+#calEventDate {
+    font-size: 16px;
+    margin-bottom: 12px;
+    opacity: 0.9;
+}
+
+#calEventList {
+    margin-bottom: 12px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.cal-event-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.cal-event-delete {
+    color: white;
+    cursor: pointer;
+    opacity: 0.6;
+    font-size: 16px;
+}
+
+.cal-event-delete:hover {
+    opacity: 1;
+}
+
+#calEventInputRow {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+#calEventInput {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 4px;
+    color: white;
+    font-family: "Aldrich", sans-serif;
+    font-size: 13px;
+}
+
+#calEventInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#calEventAdd {
+    width: 30px;
+    height: 30px;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#calEventAdd:hover {
+    font-weight: 700;
+}
+
+#calEventClose {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0.7;
+    line-height: 1;
+}
+
+#calEventClose:hover {
+    opacity: 1;
+}
+
+.toggleGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.toggleSection {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.toggleSectionHeader {
+    font-size: 14px;
+    opacity: 0.7;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 4px;
+}
+
+.toggle-container {
+    margin-bottom: 8px;
+}
+
+.toggle-container:last-child {
+    margin-bottom: 0;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 13px; 
 }
