@@ -11,7 +11,7 @@ html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  background-color: rgb(0, 0, 0);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
 input {
@@ -36,6 +36,12 @@ video, #bgImage {
     pointer-events: none;
     will-change: transform; 
     transform: translateZ(0); 
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+video.loaded, #bgImage.loaded {
+    opacity: 1;
 }
 
 #bgImage {
@@ -1275,5 +1281,3 @@ body.hide-shortcut-names .shortcut-name {
 #resetAllWidgets:hover {
     background: rgba(255, 50, 50, 0.6);
 }
-
-

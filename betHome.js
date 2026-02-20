@@ -427,23 +427,50 @@ document.getElementById("videoUpload").addEventListener("change", e => {
 function setBackgroundVideo(name) {
     localStorage.setItem("currentBackground", name);
     
+    const bgVideo = document.getElementById("bgVideo");
+    const bgImage = document.getElementById("bgImage");
+
+    bgVideo.classList.remove("loaded");
+    bgImage.classList.remove("loaded");
+    
     if (blobURLs.has(name)) {
         const tx = db.transaction("videos", "readonly");
         const store = tx.objectStore("videos");
         const req = store.get(name);
 
         req.onsuccess = () => {
-            const bgVideo = document.getElementById("bgVideo");
-            const bgImage = document.getElementById("bgImage");
-            
             if (req.result.type === 'image') {
+                bgVideo.classList.remove('loaded');
                 bgVideo.style.display = "none";
                 bgImage.style.display = "block";
+                
+                if (bgImage.complete) {
+                    setTimeout(() => bgImage.classList.add('loaded'), 25);
+                } 
+                else {
+                    bgImage.onload = () => {
+                        setTimeout(() => bgImage.classList.add('loaded'), 25);
+                    };
+                }
                 bgImage.src = blobURLs.get(name);
             } else {
+                bgImage.classList.remove('loaded');
                 bgImage.style.display = "none";
                 bgVideo.style.display = "block";
-                bgVideo.src = blobURLs.get(name);
+                requestAnimationFrame(() => {
+                    bgVideo.src = blobURLs.get(name);
+
+                    bgVideo.oncanplay = () => {
+                        setTimeout(() => {
+                            bgVideo.classList.add('loaded');
+                        }, 25);
+                    };
+                });
+                
+                // Fade in when ready to play
+                bgVideo.oncanplay = () => {
+                    bgVideo.classList.add('loaded');
+                };
             }
         };
         return;
@@ -457,17 +484,28 @@ function setBackgroundVideo(name) {
         const blobURL = URL.createObjectURL(req.result.file);
         blobURLs.set(name, blobURL);
         
-        const bgVideo = document.getElementById("bgVideo");
-        const bgImage = document.getElementById("bgImage");
-        
         if (req.result.type === 'image') {
+            bgVideo.classList.remove('loaded');
             bgVideo.style.display = "none";
             bgImage.style.display = "block";
+            
+            if (bgImage.complete) {
+                bgImage.classList.add('loaded');
+            } else {
+                bgImage.onload = () => bgImage.classList.add('loaded');
+            }
             bgImage.src = blobURL;
         } else {
+            bgImage.classList.remove('loaded');
             bgImage.style.display = "none";
             bgVideo.style.display = "block";
             bgVideo.src = blobURL;
+            
+            bgVideo.oncanplay = () => {
+                setTimeout(() => {
+                    bgVideo.classList.add('loaded');
+                }, 25);
+            };
         }
     };
 }
