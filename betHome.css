@@ -34,8 +34,8 @@ video, #bgImage {
     object-fit: cover;
     z-index: 0;
     pointer-events: none;
-    will-change: transform; /* Forces GPU acceleration */
-    transform: translateZ(0); /* Triggers hardware acceleration */
+    will-change: transform; 
+    transform: translateZ(0); 
 }
 
 #bgImage {
@@ -351,242 +351,6 @@ body:not(.edit-mode) .wide-adjust {
 
 .todo-delete:hover {
     opacity: 1;
-}
-
-
-/* ---------------------- SETTINGS MODAL ----------------------- */
-
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    color: white;
-    font-family: "Aldrich", sans-serif;
-}
-
-.modal-content {
-    position: absolute;
-    right: 0px;
-    width: 30%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: rgba(80, 80, 80, 0.6);
-    backdrop-filter: blur(10px);
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-    overflow-y: auto;
-}
-
-.modal-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.modal-content::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-.modalItem {
-    display: block;
-    position: relative;
-    margin-bottom: 10px;
-}
-
-/* setting items */
-
-#closeSettings {
-    position: absolute;
-    top: 0px;
-    right: 20px;
-    height: 20px;
-    width: 20px;
-    cursor: pointer;
-    font-size: 40px;
-    background: transparent;
-    font-family: "Aldrich", sans-serif;
-    color: white;
-    font-weight: 400;
-    z-index: 1001;
-}
-
-#closeSettings:hover {
-    font-weight: 700;
-}
-
-.settingsHeader {
-    font-size: 30px;
-    display: block;
-    position: relative;
-    margin-bottom: 10px;
-}
-
-/* background video list */
-
-#videoList {
-    --n: 2;
-    
-    width: 28vw;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(12vw, 1fr));
-    gap: 15px;
-
-    min-height: 300px;
-    max-height: 50vh;
-    overflow-y: auto;
-}
-
-#videoList img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-
-}
-
-#videoList::-webkit-scrollbar {
-    width: 8px;
-}
-
-#videoList::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-}
-#videoList::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-}
-
-#videoList::-webkit-scrollbar-thumb:hover {
-    background: rgba(50, 47, 47, 0.5);
-}
-
-.video-item {
-    display: flex;
-    flex-direction: column;
-}
-
-
-.delete-video {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 20px;
-    height: 20px;
-    background: transparent;
-    color: white;
-    z-index: 1002;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-size: 14px;
-    font-family: "Aldrich", sans-serif;
-    font-weight: 400;
-}
-
-.delete-video:hover {
-    font-weight: 700;
-}
-
-#videoUpload {
-    display: none;
-}
-
-#upLoad {
-    font-weight: 400;
-    width: 70px;
-}
-
-#upLoad:hover {
-    font-weight: 700;
-}
-
-#cityInput {
-    flex: 1;
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    color: white;
-    font-family: "Aldrich", sans-serif;
-    font-size: 14px;
-    margin-right: 10px;
-}
-
-#cityInput::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-#saveCity {
-    padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.3);
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    font-family: "Aldrich", sans-serif;
-}
-
-#saveCity:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-/* Toggle switches */
-.toggle-container {
-    margin-bottom: 15px;
-}
-
-.toggle-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.toggle-checkbox {
-    display: none;
-}
-
-.toggle-slider {
-    position: relative;
-    width: 50px;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 24px;
-    transition: background 0.3s;
-}
-
-.toggle-slider::before {
-    content: '';
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: white;
-    top: 3px;
-    left: 3px;
-    transition: transform 0.3s;
-}
-
-.toggle-checkbox:checked + .toggle-slider {
-    background: rgba(100, 200, 100, 0.6);
-}
-
-.toggle-checkbox:checked + .toggle-slider::before {
-    transform: translateX(26px);
 }
 
 /* ---------------------- WEATHER WIDGET ----------------------- */
@@ -947,7 +711,7 @@ body.hide-shortcut-names .shortcut-name {
     pointer-events: none;
 }
 
-/* Event modal */
+/* ----- CAL EVENT MODAL ----- */
 #calEventModal {
     display: none;
     position: fixed;
@@ -1149,3 +913,367 @@ body.hide-shortcut-names .shortcut-name {
     flex-shrink: 0;
     opacity: 0.8;
 }
+
+/* ---------------------- POMODORO WIDGET ----------------------- */
+
+#pomodoroWidget {
+    width: 280px;
+    height: 200px;
+}
+
+#pomodoro {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: "Aldrich", sans-serif;
+    color: inherit;
+    padding: 10px;
+}
+
+#pomodoroDisplay {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+}
+
+#pomodoroLabel {
+    font-size: 14px;
+    opacity: 0.7;
+    margin-bottom: 16px;
+}
+
+#pomodoroControls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+#pomodoroStart, #pomodoroReset {
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 20px;
+    color: inherit;
+    cursor: pointer;
+    font-family: "Aldrich", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+#pomodoroStart:hover, #pomodoroReset:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+#pomodoroStart.active {
+    background: rgba(100, 200, 100, 0.6);
+}
+
+#pomodoroSettings {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+}
+
+.pomodoro-setting {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pomodoro-setting label {
+    opacity: 0.7;
+}
+
+.pomodoro-setting input {
+    width: 40px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    color: inherit;
+    font-family: "Aldrich", sans-serif;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* ---------------------- SETTINGS MODAL ----------------------- */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    color: white;
+    font-family: "Aldrich", sans-serif;
+}
+
+.modal-content {
+    position: absolute;
+    right: 0px;
+    width: 30%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: rgba(80, 80, 80, 0.6);
+    backdrop-filter: blur(10px);
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow-y: auto;
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.modalItem {
+    display: block;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+/* ----- SETTINGS ITEMS ----- */
+
+#closeSettings {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    font-size: 40px;
+    background: transparent;
+    font-family: "Aldrich", sans-serif;
+    color: white;
+    font-weight: 400;
+    z-index: 1001;
+}
+
+#closeSettings:hover {
+    font-weight: 700;
+}
+
+.settingsHeader {
+    font-size: 30px;
+    display: block;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+/* ----- BG VIDEO LIST ----- */
+
+#videoList {
+    --n: 2;
+    
+    width: 28vw;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12vw, 1fr));
+    gap: 15px;
+
+    min-height: 300px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+#videoList img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+
+}
+
+#videoList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#videoList::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+#videoList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+#videoList::-webkit-scrollbar-thumb:hover {
+    background: rgba(50, 47, 47, 0.5);
+}
+
+.video-item {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.delete-video {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    color: white;
+    z-index: 1002;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: "Aldrich", sans-serif;
+    font-weight: 400;
+}
+
+.delete-video:hover {
+    font-weight: 700;
+}
+
+#videoUpload {
+    display: none;
+}
+
+#upLoad {
+    font-weight: 400;
+    width: 70px;
+}
+
+#upLoad:hover {
+    font-weight: 700;
+}
+
+/* ----- WEATHER WIDGET STUFF ----- */
+
+#cityInput {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    color: white;
+    font-family: "Aldrich", sans-serif;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+#cityInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#saveCity {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-family: "Aldrich", sans-serif;
+}
+
+#saveCity:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* ----- TOGGLE SWITCHES ----- */
+.toggle-container {
+    margin-bottom: 15px;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.toggle-checkbox {
+    display: none;
+}
+
+.toggle-slider {
+    position: relative;
+    width: 50px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    transition: background 0.3s;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s;
+}
+
+.toggle-checkbox:checked + .toggle-slider {
+    background: rgba(100, 200, 100, 0.6);
+}
+
+.toggle-checkbox:checked + .toggle-slider::before {
+    transform: translateX(26px);
+}
+
+.resetGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.reset-widget-btn {
+    padding: 8px 12px;
+    background: rgba(255, 100, 100, 0.3);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-family: "Aldrich", sans-serif;
+    font-size: 12px;
+}
+
+.reset-widget-btn:hover {
+    background: rgba(255, 100, 100, 0.5);
+}
+
+#resetAllWidgets {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 50, 50, 0.4);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-family: "Aldrich", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#resetAllWidgets:hover {
+    background: rgba(255, 50, 50, 0.6);
+}
+
+

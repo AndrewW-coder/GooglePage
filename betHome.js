@@ -4,7 +4,7 @@ const blobURLs = new Map();
 const openReq = indexedDB.open("VideoDB", 2);
 
 
-// monochrome SVG icons
+// monochrome items
 const iconLibrary = {
     youtube: '<svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
     github: '<svg viewBox="0 0 24 24" fill="white"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>',
@@ -27,6 +27,7 @@ const iconLibrary = {
     shopping: '<svg viewBox="0 0 24 24" fill="white"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>'
 };
 
+// some indexedDB stuff
 openReq.onupgradeneeded = e => {
     db = e.target.result;
     
@@ -50,6 +51,7 @@ openReq.onupgradeneeded = e => {
     }
 };
 
+// load videos when everything is successfully loaded
 openReq.onsuccess = e => {
     db = e.target.result;
     loadSavedBackground();
@@ -59,7 +61,7 @@ openReq.onsuccess = e => {
 
 
 
-// clock stuff
+// -------------------- CLOCK WIDGET --------------------
 function updateTime() {
     const now = new Date();
 
@@ -104,7 +106,7 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 1000);
 
-// todo stuff
+// -------------------- TODO WIDGET --------------------
 
 const toDoInput = document.getElementById("toDoInput");
 const addTaskBtn = document.getElementById("addTask");
@@ -181,10 +183,9 @@ toDoInput.addEventListener("keypress", e => {
     }
 });
 
-
 loadToDos();
-// making sure each widget has its own customizable things
 
+// -------------------- TOGGLING SIZE ADJUSTERS --------------------
 let editMode = false;
 
 document.getElementById("editToggle").onclick = () => { 
@@ -295,53 +296,7 @@ document.querySelectorAll(".widget").forEach(widget => { // accesses each widget
 
 });
 
-function saveWidget(widget) {
-    const fontSizes = {};
-    
-    widget.querySelectorAll("*").forEach((child, index) => {
-        if (child.classList.contains("resize-handle") || child.classList.contains("wide-adjust")) return;
-        
-        const fontSize = window.getComputedStyle(child).fontSize;
-        if (fontSize && parseFloat(fontSize) > 0) {
-            const elementId = child.id || Array.from(child.classList).join('-') || `elem-${index}`;
-            fontSizes[elementId] = fontSize;
-        }
-    });
-
-    localStorage.setItem(widget.id, JSON.stringify({
-        left: widget.style.left,
-        top: widget.style.top,
-        width: widget.style.width,
-        height: widget.style.height,
-        fontSizes: fontSizes
-    }));
-}
-
-function loadWidgets() {
-    document.querySelectorAll(".widget").forEach(widget => {
-        const saved = localStorage.getItem(widget.id);
-        if (!saved) return;
-        
-        const data = JSON.parse(saved);
-        widget.style.left = data.left;
-        widget.style.top = data.top;
-        widget.style.width = data.width;
-        widget.style.height = data.height;
-
-        if (data.fontSizes) {
-            widget.querySelectorAll("*").forEach((child, index) => {
-                if (child.classList.contains("resize-handle") || child.classList.contains("wide-adjust")) return;
-                
-                const elementId = child.id || Array.from(child.classList).join('-') || `elem-${index}`;
-                if (data.fontSizes[elementId]) {
-                    child.style.fontSize = data.fontSizes[elementId];
-                }
-            });
-        }
-    });
-}
-
-loadWidgets();
+// -------------------- SETTINGS MODAL INTERACTIONS --------------------
 
 const settingsButton = document.getElementById("settings");
 const modal = document.getElementById("settingsModal");
@@ -362,7 +317,7 @@ window.addEventListener("click", e => {
 });
 
 
-// settings video listing
+// ----- SETTINGS VIDEO SELECTING/DELETING -----
 const videoList = document.getElementById("videoList");
 
 function addUserVideo(file) {
@@ -537,7 +492,114 @@ function preloadAllVideos() {
     };
 }
 
-// weather
+// ----- WIDGET RESET SECTION -----
+
+const widgetDefaults = {
+    clockWidget: {
+        left: '100px',
+        top: '100px',
+        width: '300px',
+        height: '50px'
+    },
+    toDoListWidget: {
+        left: '100px',
+        top: '200px',
+        width: '400px',
+        height: '300px'
+    },
+    weatherWidget: {
+        left: '100px',
+        top: '550px',
+        width: '250px',
+        height: '150px'
+    },
+    shortcutsWidget: {
+        left: '550px',
+        top: '100px',
+        width: '400px',
+        height: '200px'
+    },
+    searchWidget: {
+        left: '550px',
+        top: '350px',
+        width: '500px',
+        height: '60px'
+    },
+    calendarWidget: {
+        left: '1000px',
+        top: '100px',
+        width: '280px',
+        height: '260px'
+    },
+    progressWidget: {
+        left: '1000px',
+        top: '400px',
+        width: '300px',
+        height: '150px'
+    },
+    pomodoroWidget: {
+        left: '100px',
+        top: '750px',
+        width: '280px',
+        height: '200px'
+    },
+    githubWidget: {
+        left: '550px',
+        top: '450px',
+        width: '320px',
+        height: '400px'
+    },
+    spotifyWidget: {
+        left: '1320px',
+        top: '100px',
+        width: '280px',
+        height: '340px'
+    }
+};
+
+function resetWidget(widgetId) {
+    const widget = document.getElementById(widgetId);
+    if (!widget) return;
+    
+    const defaults = widgetDefaults[widgetId];
+    if (!defaults) return;
+    
+    widget.style.left = defaults.left;
+    widget.style.top = defaults.top;
+    widget.style.width = defaults.width;
+    widget.style.height = defaults.height;
+    
+    localStorage.removeItem(widgetId);
+
+    widget.querySelectorAll("*").forEach(child => {
+        if (child.classList.contains("resize-handle") || child.classList.contains("wide-adjust")) return;
+        child.style.fontSize = '';
+    });
+}
+
+function resetAllWidgets() {
+    if (!confirm('Reset all widgets to their default positions and sizes?')) return;
+    
+    Object.keys(widgetDefaults).forEach(widgetId => {
+        resetWidget(widgetId);
+    });
+    
+    alert('All widgets have been reset!');
+}
+
+document.querySelectorAll('.reset-widget-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const widgetId = btn.getAttribute('data-widget');
+        if (confirm(`Reset ${btn.textContent} widget to default position and size?`)) {
+            resetWidget(widgetId);
+        }
+    });
+});
+
+document.getElementById('resetAllWidgets').addEventListener('click', resetAllWidgets);
+
+
+// -------------------- WEATHER WIDGET --------------------
 
 async function getWeather(cityName) {
     try {
@@ -633,7 +695,7 @@ setInterval(() => {
 
 
 
-// shortcuts
+// -------------------- SHORTCUTS WIDGET --------------------
 let shortcuts = [];
 
 function loadShortcuts() {
@@ -760,6 +822,8 @@ document.getElementById("addShortcut").addEventListener("click", () => {
 
 loadShortcuts();
 
+// -------------------- SEARCHBAR WIDGET --------------------
+
 function performSearch() {
     const query = document.getElementById("searchInput").value.trim();
     
@@ -835,7 +899,7 @@ document.getElementById("fontColorPicker").addEventListener("input", (e) => {
 
 loadFontColor();
 
-// calendar widget
+// -------------------- CALENDAR WIDGET --------------------
 let calendarEvents = {};
 let calCurrentDate = new Date();
 let calSelectedDate = null;
@@ -983,6 +1047,7 @@ document.getElementById("calEventModal").addEventListener("click", (e) => {
 loadCalendarEvents();
 renderCalendar();
 
+// -------------------- PROGRESS WIDGET --------------------
 
 function updateProgress() {
     const now = new Date();
@@ -1029,7 +1094,116 @@ function updateProgress() {
 updateProgress();
 setInterval(updateProgress, 1000);
 
-// toggling stuff
+// --------------------POMODORO TIMER WIDGET --------------------
+let pomodoroInterval = null;
+let pomodoroTimeLeft = 25 * 60; 
+let pomodoroIsRunning = false;
+let pomodoroIsFocus = true; 
+
+function loadPomodoroSettings() {
+    const focusTime = localStorage.getItem('pomodoroFocusTime');
+    const breakTime = localStorage.getItem('pomodoroBreakTime');
+    
+    if (focusTime) document.getElementById('pomodoroFocusTime').value = focusTime;
+    if (breakTime) document.getElementById('pomodoroBreakTime').value = breakTime;
+    
+    pomodoroTimeLeft = (parseInt(focusTime) || 25) * 60;
+    updatePomodoroDisplay();
+}
+
+function savePomodoroSettings() {
+    const focusTime = document.getElementById('pomodoroFocusTime').value;
+    const breakTime = document.getElementById('pomodoroBreakTime').value;
+    
+    localStorage.setItem('pomodoroFocusTime', focusTime);
+    localStorage.setItem('pomodoroBreakTime', breakTime);
+}
+
+function updatePomodoroDisplay() {
+    const minutes = Math.floor(pomodoroTimeLeft / 60);
+    const seconds = pomodoroTimeLeft % 60;
+    
+    document.getElementById('pomodoroDisplay').textContent = 
+        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    
+    document.getElementById('pomodoroLabel').textContent = 
+        pomodoroIsFocus ? 'Focus Time' : 'Break Time';
+}
+
+function startPomodoro() {
+    if (pomodoroIsRunning) {
+        clearInterval(pomodoroInterval);
+        pomodoroIsRunning = false;
+        document.getElementById('pomodoroStart').textContent = 'Start';
+        document.getElementById('pomodoroStart').classList.remove('active');
+    } else {
+        pomodoroIsRunning = true;
+        document.getElementById('pomodoroStart').textContent = 'Pause';
+        document.getElementById('pomodoroStart').classList.add('active');
+        
+        pomodoroInterval = setInterval(() => {
+            pomodoroTimeLeft--;
+            
+            if (pomodoroTimeLeft <= 0) {
+                clearInterval(pomodoroInterval);
+                pomodoroIsRunning = false;
+                document.getElementById('pomodoroStart').textContent = 'Start';
+                document.getElementById('pomodoroStart').classList.remove('active');
+                
+
+                pomodoroIsFocus = !pomodoroIsFocus;
+                
+                if (pomodoroIsFocus) {
+                    pomodoroTimeLeft = parseInt(document.getElementById('pomodoroFocusTime').value) * 60;
+                    alert('Break time is over! Ready to focus?');
+                } else {
+                    pomodoroTimeLeft = parseInt(document.getElementById('pomodoroBreakTime').value) * 60;
+                    alert('Focus time complete! Take a break!');
+                }
+                
+                updatePomodoroDisplay();
+            } else {
+                updatePomodoroDisplay();
+            }
+        }, 1000);
+    }
+}
+
+function resetPomodoro() {
+    clearInterval(pomodoroInterval);
+    pomodoroIsRunning = false;
+    pomodoroIsFocus = true;
+    pomodoroTimeLeft = parseInt(document.getElementById('pomodoroFocusTime').value) * 60;
+    
+    document.getElementById('pomodoroStart').textContent = 'Start';
+    document.getElementById('pomodoroStart').classList.remove('active');
+    updatePomodoroDisplay();
+}
+
+
+document.getElementById('pomodoroStart').addEventListener('click', startPomodoro);
+document.getElementById('pomodoroReset').addEventListener('click', resetPomodoro);
+
+document.getElementById('pomodoroFocusTime').addEventListener('change', () => {
+    savePomodoroSettings();
+    if (!pomodoroIsRunning && pomodoroIsFocus) {
+        pomodoroTimeLeft = parseInt(document.getElementById('pomodoroFocusTime').value) * 60;
+        updatePomodoroDisplay();
+    }
+});
+
+document.getElementById('pomodoroBreakTime').addEventListener('change', () => {
+    savePomodoroSettings();
+    if (!pomodoroIsRunning && !pomodoroIsFocus) {
+        pomodoroTimeLeft = parseInt(document.getElementById('pomodoroBreakTime').value) * 60;
+        updatePomodoroDisplay();
+    }
+});
+
+loadPomodoroSettings();
+
+
+// -------------------- TOGGLES --------------------
 function loadToggles() {
     const clockToggle = localStorage.getItem("showClock") !== "false";
     const todoToggle = localStorage.getItem("showToDo") !== "false";
@@ -1168,3 +1342,53 @@ document.getElementById("toggleProgressDay").addEventListener("change", e => {
     localStorage.setItem("showProgressDay", show);
     document.getElementById("progressDayRow").style.display = show ? "flex" : "none";
 });
+
+// -------------------- SAVING AND LOADING WIDGETS --------------------
+
+function saveWidget(widget) {
+    const fontSizes = {};
+    
+    widget.querySelectorAll("*").forEach((child, index) => {
+        if (child.classList.contains("resize-handle") || child.classList.contains("wide-adjust")) return;
+        
+        const fontSize = window.getComputedStyle(child).fontSize;
+        if (fontSize && parseFloat(fontSize) > 0) {
+            const elementId = child.id || Array.from(child.classList).join('-') || `elem-${index}`;
+            fontSizes[elementId] = fontSize;
+        }
+    });
+
+    localStorage.setItem(widget.id, JSON.stringify({
+        left: widget.style.left,
+        top: widget.style.top,
+        width: widget.style.width,
+        height: widget.style.height,
+        fontSizes: fontSizes
+    }));
+}
+
+function loadWidgets() {
+    document.querySelectorAll(".widget").forEach(widget => {
+        const saved = localStorage.getItem(widget.id);
+        if (!saved) return;
+        
+        const data = JSON.parse(saved);
+        widget.style.left = data.left;
+        widget.style.top = data.top;
+        widget.style.width = data.width;
+        widget.style.height = data.height;
+
+        if (data.fontSizes) {
+            widget.querySelectorAll("*").forEach((child, index) => {
+                if (child.classList.contains("resize-handle") || child.classList.contains("wide-adjust")) return;
+                
+                const elementId = child.id || Array.from(child.classList).join('-') || `elem-${index}`;
+                if (data.fontSizes[elementId]) {
+                    child.style.fontSize = data.fontSizes[elementId];
+                }
+            });
+        }
+    });
+}
+
+loadWidgets();

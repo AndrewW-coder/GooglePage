@@ -13,7 +13,8 @@
 
   "icons": {
     "128" : "base_icon.png"
-  }
-
-
+  },
+  "permissions": [
+    "storage"
+  ]
 }

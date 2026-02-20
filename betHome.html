@@ -130,6 +130,28 @@
             <div class="wide-adjust"></div>
         </div>
 
+        <div class="widget" id="pomodoroWidget">
+            <div id="pomodoro">
+                <div id="pomodoroDisplay">25:00</div>
+                <div id="pomodoroLabel">Focus Time</div>
+                <div id="pomodoroControls">
+                    <button id="pomodoroStart">Start</button>
+                    <button id="pomodoroReset">Reset</button>
+                </div>
+                <div id="pomodoroSettings">
+                    <div class="pomodoro-setting">
+                        <label>Focus:</label>
+                        <input type="number" id="pomodoroFocusTime" value="25" min="1" max="60"> min
+                    </div>
+                    <div class="pomodoro-setting">
+                        <label>Break:</label>
+                        <input type="number" id="pomodoroBreakTime" value="5" min="1" max="30"> min
+                    </div>
+                </div>
+            </div>
+            <div class="resize-handle"></div>
+            <div class="wide-adjust"></div>
+        </div>
 
         <button id = "editToggle"> &#9874; </button>
         <button id = "settings"> &#9881; </button>
@@ -320,6 +342,23 @@
                 </div>
 
             </div>
+
+            <div class="settingsHeader">Reset Widgets</div>
+
+                <div class="resetGrid">
+                    <button class="reset-widget-btn" data-widget="clockWidget">Clock</button>
+                    <button class="reset-widget-btn" data-widget="toDoListWidget">To-Do</button>
+                    <button class="reset-widget-btn" data-widget="weatherWidget">Weather</button>
+                    <button class="reset-widget-btn" data-widget="shortcutsWidget">Shortcuts</button>
+                    <button class="reset-widget-btn" data-widget="searchWidget">Search</button>
+                    <button class="reset-widget-btn" data-widget="calendarWidget">Calendar</button>
+                    <button class="reset-widget-btn" data-widget="progressWidget">Progress</button>
+                    <button class="reset-widget-btn" data-widget="pomodoroWidget">Pomodoro</button>
+                    <button class="reset-widget-btn" data-widget="githubWidget">GitHub</button>
+                    <button class="reset-widget-btn" data-widget="spotifyWidget">Spotify</button>
+                </div>
+
+                <button id="resetAllWidgets" style="margin-top: 10px;">Reset All Widgets</button>
         </div>
     </div>
 
