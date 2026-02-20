@@ -114,7 +114,7 @@ video.loaded, #bgImage.loaded {
   color: white;
   font-size: 20px;
   font-weight: 400;
-  font-family: "Aldrich", sans-serif;
+  font-family: var(--widget-font, "Aldrich"), sans-serif;
 }
 
 #editToggle:hover, #settings:hover {
@@ -157,7 +157,7 @@ body:not(.edit-mode) .wide-adjust {
     font-size: 40px;
     font-variant-numeric: tabular-nums;
     color: inherit;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
 }
 
 .digit {
@@ -178,7 +178,7 @@ body:not(.edit-mode) .wide-adjust {
     display: inline-block;
     width: 1.5em;
     text-align: center;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     letter-spacing: -0.05em;
 }
 
@@ -193,7 +193,7 @@ body:not(.edit-mode) .wide-adjust {
 }
 
 #toDoHead {
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     color: inherit;
     font-size: 40px;
     flex-shrink: 0;
@@ -223,7 +223,7 @@ body:not(.edit-mode) .wide-adjust {
     background: transparent;
     border-radius: 4px;
     color: inherit;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 14px;
     z-index: 1001;
     position: relative;
@@ -248,7 +248,7 @@ body:not(.edit-mode) .wide-adjust {
     color: inherit;
     font-size: 20px;
     cursor: pointer;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -293,7 +293,7 @@ body:not(.edit-mode) .wide-adjust {
     margin-bottom: 5px;
     background: transparent;
     border-radius: 4px;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 20px;
     color: inherit;
 }
@@ -373,7 +373,7 @@ body:not(.edit-mode) .wide-adjust {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 20px;
 }
 
@@ -448,7 +448,7 @@ body:not(.edit-mode) .wide-adjust {
 }
 
 .shortcut-name {
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 12px;
     text-align: center;
     word-break: break-word;
@@ -467,7 +467,7 @@ body.hide-shortcut-names .shortcut-name {
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 4px;
     color: white;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 14px;
     margin-right: 5px;
     margin-bottom: 5px;
@@ -486,7 +486,7 @@ body.hide-shortcut-names .shortcut-name {
     border-radius: 4px;
     color: white;
     cursor: pointer;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
 }
 
 #addShortcut:hover {
@@ -532,7 +532,7 @@ body.hide-shortcut-names .shortcut-name {
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 4px;
     color: white;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 14px;
     margin-right: 5px;
     margin-bottom: 5px;
@@ -601,7 +601,7 @@ body.hide-shortcut-names .shortcut-name {
     border: none;
     border-radius: 4px;
     color: inherit;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 14px;
 }
 
@@ -616,7 +616,7 @@ body.hide-shortcut-names .shortcut-name {
     color: inherit;
     font-size: 20px;
     cursor: pointer;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -638,6 +638,24 @@ body.hide-shortcut-names .shortcut-name {
     margin-bottom: 10px;
 }
 
+#fontFamilySelect {
+    width: 100%;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    color: white;
+    font-family: "Aldrich", sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+#fontFamilySelect option {
+    background: rgba(60, 60, 60, 0.95);
+    color: white;
+}
+
 /* ---------------------- CALENDAR WIDGET ----------------------- */
 
 #calendarWidget {
@@ -650,7 +668,7 @@ body.hide-shortcut-names .shortcut-name {
     height: 100%;
     display: flex;
     flex-direction: column;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     color: inherit;
 }
 
@@ -757,7 +775,7 @@ body.hide-shortcut-names .shortcut-name {
     padding: 20px;
     min-width: 250px;
     max-width: 350px;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     color: white;
     position: relative;
 }
@@ -809,7 +827,7 @@ body.hide-shortcut-names .shortcut-name {
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 4px;
     color: white;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 13px;
 }
 
@@ -897,7 +915,7 @@ body.hide-shortcut-names .shortcut-name {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     color: inherit;
 }
 
@@ -952,7 +970,7 @@ body.hide-shortcut-names .shortcut-name {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     color: inherit;
     padding: 10px;
 }
@@ -983,7 +1001,7 @@ body.hide-shortcut-names .shortcut-name {
     border-radius: 20px;
     color: inherit;
     cursor: pointer;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 12px;
     font-weight: 700;
 }
@@ -1019,7 +1037,7 @@ body.hide-shortcut-names .shortcut-name {
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 4px;
     color: inherit;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 11px;
     text-align: center;
 }
@@ -1033,7 +1051,7 @@ body.hide-shortcut-names .shortcut-name {
     background-color: rgba(0, 0, 0, 0.3);
     z-index: 1000;
     color: white;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
 }
 
 .modal-content {
@@ -1086,7 +1104,7 @@ body.hide-shortcut-names .shortcut-name {
     cursor: pointer;
     font-size: 40px;
     background: transparent;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     color: white;
     font-weight: 400;
     z-index: 1001;
@@ -1171,7 +1189,7 @@ body.hide-shortcut-names .shortcut-name {
     align-items: center;
     cursor: pointer;
     font-size: 14px;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-weight: 400;
 }
 
@@ -1201,7 +1219,7 @@ body.hide-shortcut-names .shortcut-name {
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 4px;
     color: white;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 14px;
     margin-right: 10px;
 }
@@ -1217,7 +1235,7 @@ body.hide-shortcut-names .shortcut-name {
     border-radius: 4px;
     color: white;
     cursor: pointer;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
 }
 
 #saveCity:hover {
@@ -1286,7 +1304,7 @@ body.hide-shortcut-names .shortcut-name {
     border-radius: 6px;
     color: white;
     cursor: pointer;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 12px;
 }
 
@@ -1302,7 +1320,7 @@ body.hide-shortcut-names .shortcut-name {
     border-radius: 6px;
     color: white;
     cursor: pointer;
-    font-family: "Aldrich", sans-serif;
+    font-family: var(--widget-font, "Aldrich"), sans-serif;
     font-size: 13px;
     font-weight: 700;
 }

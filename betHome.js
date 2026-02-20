@@ -1412,3 +1412,25 @@ function loadWidgets() {
 }
 
 loadWidgets();
+
+// ----- FONT FAMILY CUSTOMIZE -----
+function applyFontFamily(fontFamily) {
+    document.documentElement.style.setProperty('--widget-font', fontFamily);
+}
+
+function loadFontFamily() {
+    const savedFont = localStorage.getItem("fontFamily");
+    if (savedFont) {
+        document.getElementById("fontFamilySelect").value = savedFont;
+        applyFontFamily(savedFont);
+    }
+}
+
+document.getElementById("fontFamilySelect").addEventListener("change", (e) => {
+    const font = e.target.value;
+    localStorage.setItem("fontFamily", font);
+    applyFontFamily(font);
+});
+
+loadFontColor();
+loadFontFamily();
