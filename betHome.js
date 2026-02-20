@@ -534,62 +534,42 @@ function preloadAllVideos() {
 
 const widgetDefaults = {
     clockWidget: {
-        left: '100px',
-        top: '100px',
         width: '300px',
         height: '50px'
     },
     toDoListWidget: {
-        left: '100px',
-        top: '200px',
         width: '400px',
         height: '300px'
     },
     weatherWidget: {
-        left: '100px',
-        top: '550px',
         width: '250px',
         height: '150px'
     },
     shortcutsWidget: {
-        left: '550px',
-        top: '100px',
         width: '400px',
         height: '200px'
     },
     searchWidget: {
-        left: '550px',
-        top: '350px',
         width: '500px',
         height: '60px'
     },
     calendarWidget: {
-        left: '1000px',
-        top: '100px',
         width: '280px',
         height: '260px'
     },
     progressWidget: {
-        left: '1000px',
-        top: '400px',
         width: '300px',
         height: '150px'
     },
     pomodoroWidget: {
-        left: '100px',
-        top: '750px',
         width: '280px',
         height: '200px'
     },
     githubWidget: {
-        left: '550px',
-        top: '450px',
         width: '320px',
         height: '400px'
     },
     spotifyWidget: {
-        left: '1320px',
-        top: '100px',
         width: '280px',
         height: '340px'
     }
@@ -602,8 +582,6 @@ function resetWidget(widgetId) {
     const defaults = widgetDefaults[widgetId];
     if (!defaults) return;
     
-    widget.style.left = defaults.left;
-    widget.style.top = defaults.top;
     widget.style.width = defaults.width;
     widget.style.height = defaults.height;
     
@@ -613,6 +591,8 @@ function resetWidget(widgetId) {
         if (child.classList.contains("resize-handle") || child.classList.contains("wide-adjust")) return;
         child.style.fontSize = '';
     });
+
+    loadWidgets();
 }
 
 function resetAllWidgets() {
@@ -622,15 +602,13 @@ function resetAllWidgets() {
         resetWidget(widgetId);
     });
     
-    alert('All widgets have been reset!');
+    loadWidgets();
 }
 
 document.querySelectorAll('.reset-widget-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const widgetId = btn.getAttribute('data-widget');
-        if (confirm(`Reset ${btn.textContent} widget to default position and size?`)) {
-            resetWidget(widgetId);
-        }
+        resetWidget(widgetId);
     });
 });
 
@@ -1408,7 +1386,11 @@ function saveWidget(widget) {
 function loadWidgets() {
     document.querySelectorAll(".widget").forEach(widget => {
         const saved = localStorage.getItem(widget.id);
-        if (!saved) return;
+        if (!saved) {
+            widget.style.left = "20px";
+            widget.style.top = "20px";
+            return;
+        }
         
         const data = JSON.parse(saved);
         widget.style.left = data.left;

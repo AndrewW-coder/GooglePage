@@ -539,6 +539,24 @@ body.hide-shortcut-names .shortcut-name {
     cursor: pointer;
 }
 
+#shortcutIconSelect::-webkit-scrollbar {
+    width: 8px;
+}
+
+#shortcutIconSelect::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+#shortcutIconSelect::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+#shortcutIconSelect::-webkit-scrollbar-thumb:hover {
+    background: rgba(50, 47, 47, 0.5);
+}
+
 #shortcutIconSelect option {
     background: rgba(60, 60, 60, 0.95);
     color: white;
@@ -1083,6 +1101,15 @@ body.hide-shortcut-names .shortcut-name {
     display: block;
     position: relative;
     margin-bottom: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.settingsHeader:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
 }
 
 /* ----- BG VIDEO LIST ----- */
@@ -1221,6 +1248,7 @@ body.hide-shortcut-names .shortcut-name {
     background: rgba(255, 255, 255, 0.3);
     border-radius: 24px;
     transition: background 0.3s;
+    flex-shrink: 0;
 }
 
 .toggle-slider::before {
@@ -1233,6 +1261,7 @@ body.hide-shortcut-names .shortcut-name {
     top: 3px;
     left: 3px;
     transition: transform 0.3s;
+    flex-shrink: 0;
 }
 
 .toggle-checkbox:checked + .toggle-slider {
