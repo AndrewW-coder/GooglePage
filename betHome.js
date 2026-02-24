@@ -64,12 +64,19 @@ openReq.onsuccess = e => {
 // -------------------- CLOCK WIDGET --------------------
 function updateTime() {
     const now = new Date();
+    
+    const is24Hour = localStorage.getItem("show24Hour") === "true";
+    const showAMPM = localStorage.getItem("showAMPM") !== "false";
+    const showSeconds = localStorage.getItem("showSeconds") !== "false";
+    const showColons = localStorage.getItem("showColons") !== "false";
 
     let hours = now.getHours();
-    const isPM = hours >= 12;
-    if (hours === 0) hours = 12;
-    else if (hours > 12) hours -= 12;
-
+    let isPM = hours >= 12;
+    
+    if (!is24Hour) {
+        if (hours === 0) hours = 12;
+        else if (hours > 12) hours -= 12;
+    }
     
     const minutes = String(now.getMinutes()).padStart(2, "0");
     const seconds = String(now.getSeconds()).padStart(2, "0");
@@ -77,31 +84,33 @@ function updateTime() {
     const clock = document.getElementById("clock");
     clock.innerHTML = "";
 
-    const showSeconds = localStorage.getItem("showSeconds") !== "false";
     let timeStr = showSeconds 
         ? `${hours}:${minutes}:${seconds}`
         : `${hours}:${minutes}`;
 
-    if(hours < 10) {
+
+    if (!is24Hour && hours < 10) {
         clock.innerHTML += `<span class="digit"> </span>`;
     }
-
-    const showColons = localStorage.getItem("showColons") !== "false";
 
     clock.innerHTML += timeStr.split('').map(char => {
         if (/\d/.test(char)) {
             return `<span class="digit">${char}</span>`;
         } else if (char === ':') {
             if(showColons) return `<span class="colon">:</span>`;
-            else return `<span class="colon"> </span>`
+            else return `<span class="colon"> </span>`;
         } else {
             return char;
         }
     }).join('');
 
-    clock.innerHTML += `<span class="ampm">${isPM ? " PM" : " AM"}</span>`;
+    if (!is24Hour && showAMPM) {
+        clock.innerHTML += `<span class="ampm">${isPM ? " PM" : " AM"}</span>`;
+    }
+}
 
-};
+updateTime();
+setInterval(updateTime, 1000);
 
 updateTime();
 setInterval(updateTime, 1000);
@@ -737,7 +746,6 @@ function displayShortcuts() {
         const item = document.createElement("a");
         item.className = "shortcut-item";
         item.href = shortcut.url;
-        item.target = "_blank";
         if (savedColor) item.style.color = savedColor;
         
         const icon = document.createElement("div");
@@ -842,14 +850,14 @@ loadShortcuts();
 
 function performSearch() {
     const query = document.getElementById("searchInput").value.trim();
-    
     if (query) {
-        const searchURL = "https://www.google.com/search?q=" + encodeURIComponent(query);
-        window.open(searchURL, '_blank');
+        chrome.search.query({
+            text: query,
+            disposition: "CURRENT_TAB"
+        });
         document.getElementById("searchInput").value = "";
     }
 }
-
 
 document.getElementById("searchButton").addEventListener("click", performSearch);
 
@@ -1225,6 +1233,8 @@ function loadToggles() {
     const todoToggle = localStorage.getItem("showToDo") !== "false";
     const secondsToggle = localStorage.getItem("showSeconds") !== "false";
     const colonsToggle = localStorage.getItem("showColons") !== "false";
+    const is24HourToggle = localStorage.getItem("show24Hour") === "true";
+    const ampmToggle = localStorage.getItem("showAMPM") !== "false";
     const weatherToggle = localStorage.getItem("showWeather") !== "false";
     const shortcutsToggle = localStorage.getItem("showShortcuts") !== "false";
     const shortcutNamesToggle = localStorage.getItem("showShortcutNames") !== "false";
@@ -1235,11 +1245,14 @@ function loadToggles() {
     const progressMonthToggle = localStorage.getItem("showProgressMonth") !== "false";
     const progressWeekToggle = localStorage.getItem("showProgressWeek") !== "false";
     const progressDayToggle = localStorage.getItem("showProgressDay") !== "false";
+    const pomodoroToggle = localStorage.getItem("showPomodoro") !== "false";
 
     document.getElementById("toggleClock").checked = clockToggle;
     document.getElementById("toggleToDo").checked = todoToggle;
     document.getElementById("toggleSeconds").checked = secondsToggle;
     document.getElementById("toggleColons").checked = colonsToggle;
+    document.getElementById("toggle24Hour").checked = is24HourToggle;
+    document.getElementById("toggleAMPM").checked = ampmToggle;
     document.getElementById("toggleWeather").checked = weatherToggle;
     document.getElementById("toggleShortcuts").checked = shortcutsToggle;
     document.getElementById("toggleShortcutNames").checked = shortcutNamesToggle;
@@ -1250,6 +1263,7 @@ function loadToggles() {
     document.getElementById("toggleProgressMonth").checked = progressMonthToggle;
     document.getElementById("toggleProgressWeek").checked = progressWeekToggle;
     document.getElementById("toggleProgressDay").checked = progressDayToggle;
+    document.getElementById("togglePomodoro").checked = pomodoroToggle;
 
     document.getElementById("clockWidget").style.display = clockToggle ? "block" : "none";
     document.getElementById("toDoListWidget").style.display = todoToggle ? "block" : "none";
@@ -1262,12 +1276,25 @@ function loadToggles() {
     document.getElementById("progressMonthRow").style.display = progressMonthToggle ? "flex" : "none";
     document.getElementById("progressWeekRow").style.display = progressWeekToggle ? "flex" : "none";
     document.getElementById("progressDayRow").style.display = progressDayToggle ? "flex" : "none";
+    document.getElementById("pomodoroWidget").style.display = pomodoroToggle ? "block" : "none";
 
     if (!shortcutNamesToggle) {
-    document.body.classList.add("hide-shortcut-names");
+        document.body.classList.add("hide-shortcut-names");
+    }
 }
 
-}
+document.getElementById("toggle24Hour").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("show24Hour", show);
+    updateTime();
+});
+
+document.getElementById("toggleAMPM").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showAMPM", show);
+    updateTime();
+});
+
 
 document.getElementById("toggleClock").addEventListener("change", e => {
     const show = e.target.checked;
@@ -1357,6 +1384,12 @@ document.getElementById("toggleProgressDay").addEventListener("change", e => {
     const show = e.target.checked;
     localStorage.setItem("showProgressDay", show);
     document.getElementById("progressDayRow").style.display = show ? "flex" : "none";
+});
+
+document.getElementById("togglePomodoro").addEventListener("change", e => {
+    const show = e.target.checked;
+    localStorage.setItem("showPomodoro", show);
+    document.getElementById("pomodoroWidget").style.display = show ? "block" : "none";
 });
 
 // -------------------- SAVING AND LOADING WIDGETS --------------------

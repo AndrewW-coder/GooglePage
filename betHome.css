@@ -1140,7 +1140,7 @@ body.hide-shortcut-names .shortcut-name {
     grid-template-columns: repeat(auto-fill, minmax(12vw, 1fr));
     gap: 15px;
 
-    min-height: 300px;
+    min-height: 200px;
     max-height: 50vh;
     overflow-y: auto;
 }

@@ -1,6 +1,6 @@
 {
-  "name": "Better Home",
-  "description": "A better google search screen",
+  "name": "SearchDesk",
+  "description": "A customizable google search screen with animated backgrounds.",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
@@ -14,7 +14,6 @@
   "icons": {
     "128" : "base_icon.png"
   },
-  "permissions": [
-    "storage"
-  ]
+
+  "permissions": ["search"]
 }
